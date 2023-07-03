@@ -2,6 +2,7 @@
 using System;
 using System.Windows;
 using TwitchBot.Core;
+using TwitchBot.MVVM.ViewModel;
 using TwitchBot.Services;
 
 
