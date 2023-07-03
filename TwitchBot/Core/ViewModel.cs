@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace TwitchBot.Core
+﻿namespace TwitchBot.Core
 {
-    internal class ViewModel : ObservableObject
+    public class ViewModel : ObservableObject
     {
     }
 }
