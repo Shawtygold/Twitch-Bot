@@ -28,6 +28,17 @@ namespace TwitchBot.MVVM.ViewModel
 
         #endregion
 
+        #region IndicatorBackground
+
+        private string _indicatorBackground = "#414141";
+        public string IndicatorBackground
+        {
+            get { return _indicatorBackground; }
+            set { _indicatorBackground = value; OnPropertyChanged(); }
+        }
+
+        #endregion
+
         #endregion
     }
 }

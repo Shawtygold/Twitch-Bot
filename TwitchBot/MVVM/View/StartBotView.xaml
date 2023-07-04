@@ -3,11 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:bi="https://github.com/helluvamatt/BootstrapIcons.Wpf/"
              xmlns:local="clr-namespace:TwitchBot.MVVM.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     
     <UserControl.Resources>
+        
+        <!--StartButton-->      
         <Style TargetType="Button" x:Key="StartButton">
             <Setter Property="Template">
                 <Setter.Value>
@@ -22,8 +25,24 @@
                                 <SolidColorBrush Color="#262626" x:Name="BorderBackground"/>
                             </Border.Background>
 
-                            <Image Source="pack://application:,,,/Resources/TwitchIcon.png"
-                                    Width="40"/>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Image Source="pack://application:,,,/Resources/TwitchIcon.png"
+                                       Width="40"/>
+
+                                <Border x:Name="indicator"
+                                        Grid.Row="1"
+                                        Width="35" 
+                                        Height="5" 
+                                        CornerRadius="2.5"
+                                        Margin="0,0,0,5"
+                                        Background="{TemplateBinding Background}">
+                                </Border>
+                            </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
                             
@@ -61,9 +80,133 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!--CommandsButton-->
+        <Style TargetType="Button" x:Key="CommandsButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Width="40"
+                                Height="40"
+                                CornerRadius="4">
+                            
+                            <Border.Background>
+                                <SolidColorBrush Color="#272727" x:Name="BorderBackground"/>
+                            </Border.Background>
+                            
+                            <bi:BootstrapIcon Icon="CodeSlash"
+                                              Foreground="#BABABA"
+                                              Width="18"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+
+                            <EventTrigger RoutedEvent="Border.MouseEnter"
+                                      SourceName="border">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="BorderBackground"
+                                                    Storyboard.TargetProperty="Color"
+                                                    From="#272727"
+                                                    To="#2C2C2C"
+                                                    Duration="0:0:0.1"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <EventTrigger RoutedEvent="Border.MouseLeave"
+                                      SourceName="border">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="BorderBackground"
+                                                    Storyboard.TargetProperty="Color"
+                                                    From="#2C2C2C"
+                                                    To="#272727"
+                                                    Duration="0:0:0.1"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!--StatisticsButton-->
+        <Style TargetType="Button" x:Key="StatisticsButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Width="40"
+                                Height="40"
+                                CornerRadius="4">
+                            
+                            <Border.Background>
+                                <SolidColorBrush Color="#272727" x:Name="BorderBackground"/>
+                            </Border.Background>
+                            
+                            <bi:BootstrapIcon Icon="BarChartFill"
+                                              Foreground="#BABABA"
+                                              Width="18"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+
+                            <EventTrigger RoutedEvent="Border.MouseEnter"
+                                      SourceName="border">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="BorderBackground"
+                                                    Storyboard.TargetProperty="Color"
+                                                    From="#272727"
+                                                    To="#2C2C2C"
+                                                    Duration="0:0:0.1"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <EventTrigger RoutedEvent="Border.MouseLeave"
+                                      SourceName="border">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="BorderBackground"
+                                                    Storyboard.TargetProperty="Color"
+                                                    From="#2C2C2C"
+                                                    To="#272727"
+                                                    Duration="0:0:0.1"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
     </UserControl.Resources>
     
     <Grid>
-        <Button Style="{DynamicResource StartButton}"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        
+        <Button Style="{DynamicResource StartButton}"
+                Background="{Binding IndicatorBackground}"/>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1"
+                    Margin="20,0,0,22">
+            <Button Style="{DynamicResource CommandsButton}"
+                    Margin="0,0,10,0"/>
+            <Button Style="{DynamicResource StatisticsButton}"/>
+        </StackPanel>
     </Grid>
 </UserControl>
