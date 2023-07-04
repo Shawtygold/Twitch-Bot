@@ -18,6 +18,8 @@ namespace TwitchBot.MVVM.ViewModel
             Navigation = navigation;
             CloseCommand = new RelayCommand(Close);
             MinimizeCommand = new RelayCommand(Minimize);
+
+            Navigation.NavigateTo<StartBotViewModel>();
         }
 
         #region Properties

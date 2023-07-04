@@ -1,4 +1,10 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:TwitchBot.MVVM.ViewModel"
+                    xmlns:view="clr-namespace:TwitchBot.MVVM.View">
+
+    <DataTemplate DataType="{x:Type TypeName=vm:StartBotViewModel}">
+        <view:StartBotView/>
+    </DataTemplate>
     
 </ResourceDictionary>
