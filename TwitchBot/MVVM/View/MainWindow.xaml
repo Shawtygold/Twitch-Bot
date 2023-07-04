@@ -100,10 +100,10 @@
                                 VerticalAlignment="Top"
                                 HorizontalAlignment="Right">
                         <Button Style="{DynamicResource MinimizeButton}"
-                            Command="{Binding MinimizeCommand}"/>
+                                Command="{Binding MinimizeCommand}"/>
 
                         <Button Style="{DynamicResource CloseButton}"
-                            Command="{Binding CloseCommand}"/>
+                                Command="{Binding CloseCommand}"/>
                     </StackPanel>
                 </Grid>
             </Border>
