@@ -25,6 +25,7 @@ namespace TwitchBot
             });
 
             services.AddSingleton<MainViewModel>();
+            services.AddSingleton<StartBotViewModel>();
 
             services.AddSingleton<INavigationService, NavigationService>();
 

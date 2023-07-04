@@ -6,7 +6,64 @@
              xmlns:local="clr-namespace:TwitchBot.MVVM.View"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.Resources>
+        <Style TargetType="Button" x:Key="StartButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                CornerRadius="4"
+                                Width="100"
+                                Height="100"
+                                VerticalAlignment="Top"
+                                Margin="0,170,0,0">
+                            <Border.Background>
+                                <SolidColorBrush Color="#262626" x:Name="BorderBackground"/>
+                            </Border.Background>
+
+                            <Image Source="pack://application:,,,/Resources/TwitchIcon.png"
+                                    Width="40"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            
+                            <EventTrigger RoutedEvent="Border.MouseEnter"
+                                      SourceName="border">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="BorderBackground"
+                                                    Storyboard.TargetProperty="Color"
+                                                    From="#262626"
+                                                    To="#2C2C2C"
+                                                    Duration="0:0:0.1"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <EventTrigger RoutedEvent="Border.MouseLeave"
+                                      SourceName="border">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="BorderBackground"
+                                                    Storyboard.TargetProperty="Color"
+                                                    From="#2C2C2C"
+                                                    To="#262626"
+                                                    Duration="0:0:0.1"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    
     <Grid>
-            
+        <Button Style="{DynamicResource StartButton}"/>
     </Grid>
 </UserControl>
