@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using TwitchBot.MVVM.Model;
 
 namespace TwitchBot.MVVM.View
 {
@@ -23,6 +24,11 @@ namespace TwitchBot.MVVM.View
         public StartBotView()
         {
             InitializeComponent();
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            ShawtygoldqBot bot = new();
         }
     }
 }
