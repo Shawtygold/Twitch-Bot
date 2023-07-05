@@ -19,10 +19,10 @@ namespace TwitchBot.MVVM.Model
 
         public ShawtygoldqBot()
         {
-            ConnectionCredentials credentials = new ConnectionCredentials("shawtygoldqbot", "bvdwgq2k2sqte0ctvpzwbjpgj0f5y6"); /*"TwitchBotName", "TitchOAuth"*/
+            ConnectionCredentials credentials = new ConnectionCredentials("TwitchBotName", "TitchOAuth"); 
 
             client = new TwitchClient();
-            client.Initialize(credentials, "shawtygoldq");
+            client.Initialize(credentials, "channel");
 
             client.OnConnected += Client_OnConnected;
             client.OnJoinedChannel += Client_OnJoinedChannel;
@@ -42,87 +42,99 @@ namespace TwitchBot.MVVM.Model
 
         private void Client_OnJoinedChannel(object? sender, OnJoinedChannelArgs e)
         {
-            client.SendMessage(e.Channel, "Приветствую! Не проказничать в чате!");
+            try
+            {
+                client.SendMessage(e.Channel, "Приветствую! Не проказничать в чате!");
+            }
+            catch { }
         }
 
         private void Client_OnMessageReceived(object? sender, OnMessageReceivedArgs e)
         {
-            for(int i = 0; i < badWords.Count; i++)
+            try
             {
-                if (e.ChatMessage.Message.ToLower().Contains(badWords[i]))
-                    client.TimeoutUser(e.ChatMessage.Channel, e.ChatMessage.Username, TimeSpan.FromSeconds(30), "Не ругайся, отдохни минут 30");                  
-            }          
+                for (int i = 0; i < badWords.Count; i++)
+                {
+                    if (e.ChatMessage.Message.ToLower().Contains(badWords[i]))
+                        client.TimeoutUser(e.ChatMessage.Channel, e.ChatMessage.Username, TimeSpan.FromSeconds(30), "Не ругайся, отдохни минут 30");
+                }
+            }
+            catch { }                  
         }
 
         private void Client_OnChatCommandReceived(object? sender, OnChatCommandReceivedArgs e)
         {
-            switch (e.Command.CommandText.ToLower())
+            try
             {
-                case "discord":
-                    {
-                        client.SendMessage(e.Command.ChatMessage.Channel, "Discord: https://discord.gg/d7zUqVYXYh");
-                    }
-                    break;
+                switch (e.Command.CommandText.ToLower())
+                {
+                    case "discord":
+                        {
+                            client.SendMessage(e.Command.ChatMessage.Channel, "Discord: https://discord.gg/d7zUqVYXYh");
+                        }
+                        break;
 
-                case "donate":
-                    {
-                        client.SendMessage(e.Command.ChatMessage.Channel, "Donate: https://www.donationalerts.com/r/shawtygold");
-                    }            
-                    break;
+                    case "donate":
+                        {
+                            client.SendMessage(e.Command.ChatMessage.Channel, "Donate: https://www.donationalerts.com/r/shawtygold");
+                        }
+                        break;
 
-                case "youtube":
-                    {
-                        client.SendMessage(e.Command.ChatMessage.Channel, "YouTube: https://www.youtube.com/channel/UCJixaKetI10TJTJ4YX2V_Kg");
-                    }       
-                    break;                 
+                    case "youtube":
+                        {
+                            client.SendMessage(e.Command.ChatMessage.Channel, "YouTube: https://www.youtube.com/channel/UCJixaKetI10TJTJ4YX2V_Kg");
+                        }
+                        break;
 
-                case "telegram":
-                    {
-                        client.SendMessage(e.Command.ChatMessage.Channel, "Telegram: https://t.me/+nAFnNgTUJq85OTM6");
-                    }                   
-                    break;
+                    case "telegram":
+                        {
+                            client.SendMessage(e.Command.ChatMessage.Channel, "Telegram: https://t.me/+nAFnNgTUJq85OTM6");
+                        }
+                        break;
 
-                case "ручник":
-                    {
-                        int number = GetRandomIndex(0, 25);
-                        client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" размер твоего ручника - {number} см!");
-                    }                    
-                    break;
+                    case "ручник":
+                        {
+                            int number = GetRandomIndex(0, 25);
+                            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" размер твоего ручника - {number} см!");
+                        }
+                        break;
 
-                case "обнять":
-                    {
-                        int index = GetRandomIndex(0, userNames.Count - 1);
-                        client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" обнял {userNames[index]}");
-                    }
-                    break;
+                    case "обнять":
+                        {
+                            int index = GetRandomIndex(0, userNames.Count - 1);
+                            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" обнял {userNames[index]}");
+                        }
+                        break;
 
-                case "поцелуй":
-                    {
-                        int index = GetRandomIndex(0, userNames.Count - 1);
-                        client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" поцеловал {userNames[index]}");
-                    } 
-                    break;
+                    case "поцелуй":
+                        {
+                            int index = GetRandomIndex(0, userNames.Count - 1);
+                            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" поцеловал {userNames[index]}");
+                        }
+                        break;
 
-                case "рукопожатие":
-                    {
-                        int index = GetRandomIndex(0, userNames.Count - 1);
-                        client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" пожал руку {userNames[index]}");
-                    }                    
-                    break;
+                    case "рукопожатие":
+                        {
+                            int index = GetRandomIndex(0, userNames.Count - 1);
+                            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" пожал руку {userNames[index]}");
+                        }
+                        break;
 
-                case "вертушка":
-                    {
-                        int index = GetRandomIndex(0, userNames.Count - 1);
-                        client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" прописал с вертухи {userNames[index]}");
-                    }                
-                    break;
+                    case "вертушка":
+                        {
+                            int index = GetRandomIndex(0, userNames.Count - 1);
+                            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" прописал с вертухи {userNames[index]}");
+                        }
+                        break;
 
-                default:
-                    {
-                        client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + ", такой команды не существует!");
-                    }                  
-                    break;
-            } 
+                    default:
+                        {
+                            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + ", такой команды не существует!");
+                        }
+                        break;
+                }
+            }
+            catch { }            
         }
 
         //почему-то срабатывает с реальными пользователями через некоторое время, а не сразу, возможно это твич хренью страдает
@@ -148,7 +160,11 @@ namespace TwitchBot.MVVM.Model
 
         private void Client_OnModeratorJoined(object? sender, OnModeratorJoinedArgs e)
         {
-            client.SendMessage(e.Channel, $"Модератор {e.Username} на связи!");
+            try
+            {
+                client.SendMessage(e.Channel, $"Модератор {e.Username} на связи!");
+            }
+            catch { }
         }
 
         //получение рандомного индекса
