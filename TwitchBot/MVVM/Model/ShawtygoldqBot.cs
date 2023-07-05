@@ -19,25 +19,46 @@ namespace TwitchBot.MVVM.Model
 
         public ShawtygoldqBot()
         {
-            ConnectionCredentials credentials = new ConnectionCredentials("TwitchBotName", "TitchOAuth"); 
+            ConnectionCredentials credentials = new ConnectionCredentials("shawtygoldqbot", "bvdwgq2k2sqte0ctvpzwbjpgj0f5y6");
 
             client = new TwitchClient();
-            client.Initialize(credentials, "channel");
+            client.Initialize(credentials, "shawtygoldq");
 
             client.OnConnected += Client_OnConnected;
+            client.OnDisconnected += Client_OnDisconnected;
             client.OnJoinedChannel += Client_OnJoinedChannel;
             client.OnMessageReceived += Client_OnMessageReceived;
             client.OnChatCommandReceived += Client_OnChatCommandReceived;
             client.OnUserJoined += Client_OnUserJoined;
             client.OnUserLeft += Client_OnUserLeft;
             client.OnModeratorJoined += Client_OnModeratorJoined;
-
-            client.Connect();
         }
+
+
+        #region Properties
+
+        public string BotStatus { get; set; } = "Off";
+
+        #endregion
+
+        #region Events 
 
         private void Client_OnConnected(object? sender, OnConnectedArgs e)
         {
-            
+            try
+            {
+                client.SendMessage("shawtygoldq", "Присоединился");
+            }
+            catch { }
+        }
+
+        private void Client_OnDisconnected(object? sender, TwitchLib.Communication.Events.OnDisconnectedEventArgs e)
+        {
+            try
+            {
+                client.SendMessage("shawtygoldq", "Отсоединился");
+            }
+            catch { }
         }
 
         private void Client_OnJoinedChannel(object? sender, OnJoinedChannelArgs e)
@@ -167,6 +188,34 @@ namespace TwitchBot.MVVM.Model
             catch { }
         }
 
+        #endregion
+
+        #region Methods
+
+        internal void Connect()
+        {
+            try
+            {                                
+                //подключаем бота
+                client.Connect();
+
+                BotStatus = "On";
+            }
+            catch { }
+        }
+
+        internal void Disconnect()
+        {
+            try
+            {
+                //отключаем бота
+                client.Disconnect();
+
+                BotStatus = "Off";
+            }
+            catch { }
+        }
+
         //получение рандомного индекса
         private int GetRandomIndex(int from, int to)
         {
@@ -175,5 +224,7 @@ namespace TwitchBot.MVVM.Model
 
             return index;
         }
+
+        #endregion
     }
 }

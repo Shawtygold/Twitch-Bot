@@ -200,7 +200,8 @@
         </Grid.RowDefinitions>
         
         <Button Style="{DynamicResource StartButton}"
-                Background="{Binding IndicatorBackground}" Click="Button_Click"/>
+                Background="{Binding IndicatorBackground}"
+                Command="{Binding StartBotCommand}"/>
 
         <StackPanel Orientation="Horizontal" Grid.Row="1"
                     Margin="20,0,0,22">
