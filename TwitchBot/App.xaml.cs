@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore.Sqlite.Design.Internal;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Windows;
 using TwitchBot.Core;
@@ -26,6 +27,8 @@ namespace TwitchBot
 
             services.AddSingleton<MainViewModel>();
             services.AddSingleton<StartBotViewModel>();
+            services.AddSingleton<CommandsViewModel>();
+            services.AddSingleton<LoadingScreenViewModel>();
 
             services.AddSingleton<INavigationService, NavigationService>();
 

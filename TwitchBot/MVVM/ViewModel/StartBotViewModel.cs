@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -19,6 +20,7 @@ namespace TwitchBot.MVVM.ViewModel
             Navigation = navigation;
 
             StartBotCommand = new RelayCommand(StartBot);
+            NaviagteToCommandsCommand = new RelayCommand(NaviagteToCommands);
         }
 
         //инициализирую бота
@@ -53,6 +55,8 @@ namespace TwitchBot.MVVM.ViewModel
         #region Commands
 
         public ICommand StartBotCommand { get; set; }
+        public ICommand NaviagteToCommandsCommand { get; set; }
+
         private void StartBot(object obj)
         {            
             if (bot.BotStatus == "Off")
@@ -67,6 +71,21 @@ namespace TwitchBot.MVVM.ViewModel
 
                 bot.Disconnect();
             }
+        }
+        private void NaviagteToCommands(object obj)
+        {
+            //экран загрузки
+            Navigation.NavigateTo<LoadingScreenViewModel>();
+
+            //получение списка команд из базы данных в фоновом потоке
+            Thread thread = new(GetData);
+            thread.Start();        
+        }
+
+        private void GetData()
+        {
+            CommandsViewModel.StaticCommands = DataWorker.GetCommands();
+            Navigation.NavigateTo<CommandsViewModel>();
         }
 
         #endregion

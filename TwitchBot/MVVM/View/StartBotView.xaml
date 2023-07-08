@@ -206,7 +206,8 @@
         <StackPanel Orientation="Horizontal" Grid.Row="1"
                     Margin="20,0,0,22">
             <Button Style="{DynamicResource CommandsButton}"
-                    Margin="0,0,10,0"/>
+                    Margin="0,0,10,0"
+                    Command="{Binding NaviagteToCommandsCommand}"/>
             <Button Style="{DynamicResource StatisticsButton}"/>
         </StackPanel>
     </Grid>

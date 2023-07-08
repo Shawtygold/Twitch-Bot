@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Xml.Serialization;
 using TwitchBot.Core;
+using TwitchBot.MVVM.Model;
 using TwitchBot.Services;
 
 namespace TwitchBot.MVVM.ViewModel
@@ -18,6 +19,19 @@ namespace TwitchBot.MVVM.ViewModel
             Navigation = navigation;
             CloseCommand = new RelayCommand(Close);
             MinimizeCommand = new RelayCommand(Minimize);
+
+            using (ApplicationContext db = new())
+            {
+                Command c = new()
+                {
+                    Title = "discordoa",
+                    ResponceType = "{user} приветствует {user}!",
+                    IsActive = true
+                };
+
+                db.Add(c);
+                db.SaveChanges();
+            }
 
             Navigation.NavigateTo<StartBotViewModel>();
         }

@@ -13,9 +13,10 @@ namespace TwitchBot.MVVM.Model
 {
     class ShawtygoldqBot
     {
-        private List<string> userNames = new();
+        
         private TwitchClient client;
-        private readonly List<string> badWords = new() {"гомик", "гомосек", "негр", "негритянка", "негрунчик", "негрилла", "кацап", "москаль", "русня", "хохол", "укроп", "жид", "хач", "даун", "педик", "педераст", "пидорас", "пидор", "пидарас", "гей", "шлюха", "блядота", "мать ебал", "иди нахуй" };
+
+        Dictionary<string, string> variables;
 
         public ShawtygoldqBot()
         {
@@ -25,7 +26,6 @@ namespace TwitchBot.MVVM.Model
             client.Initialize(credentials, "shawtygoldq");
 
             client.OnConnected += Client_OnConnected;
-            client.OnDisconnected += Client_OnDisconnected;
             client.OnJoinedChannel += Client_OnJoinedChannel;
             client.OnMessageReceived += Client_OnMessageReceived;
             client.OnChatCommandReceived += Client_OnChatCommandReceived;
@@ -34,10 +34,11 @@ namespace TwitchBot.MVVM.Model
             client.OnModeratorJoined += Client_OnModeratorJoined;
         }
 
-
         #region Properties
 
         public string BotStatus { get; set; } = "Off";
+        private List<string> UserNames { get; set; } = new();
+        private List<string> BadWords { get; set; } = new() { "гомик", "гомосек", "негр", "негритянка", "негрунчик", "негрилла", "кацап", "москаль", "русня", "хохол", "укроп", "жид", "хач", "даун", "педик", "педераст", "пидорас", "пидор", "пидарас", "гей", "шлюха", "блядота", "мать ебал", "иди нахуй" };
 
         #endregion
 
@@ -48,15 +49,6 @@ namespace TwitchBot.MVVM.Model
             try
             {
                 client.SendMessage("shawtygoldq", "Присоединился");
-            }
-            catch { }
-        }
-
-        private void Client_OnDisconnected(object? sender, TwitchLib.Communication.Events.OnDisconnectedEventArgs e)
-        {
-            try
-            {
-                client.SendMessage("shawtygoldq", "Отсоединился");
             }
             catch { }
         }
@@ -74,9 +66,9 @@ namespace TwitchBot.MVVM.Model
         {
             try
             {
-                for (int i = 0; i < badWords.Count; i++)
+                for (int i = 0; i < BadWords.Count; i++)
                 {
-                    if (e.ChatMessage.Message.ToLower().Contains(badWords[i]))
+                    if (e.ChatMessage.Message.ToLower().Contains(BadWords[i]))
                         client.TimeoutUser(e.ChatMessage.Channel, e.ChatMessage.Username, TimeSpan.FromSeconds(30), "Не ругайся, отдохни минут 30");
                 }
             }
@@ -87,73 +79,107 @@ namespace TwitchBot.MVVM.Model
         {
             try
             {
-                switch (e.Command.CommandText.ToLower())
+
+                List<Command> commands = DataWorker.GetCommands();
+
+                variables = new Dictionary<string, string>()
+                {   //имя рандомного учатсика чата
+                    ["{random_chatter}"] = UserNames[GetRandomIndex(0, UserNames.Count-1)],
+                    ["{user}"] = e.Command.ChatMessage.Username
+                    
+                    //["фывфы "] = GetRandomIndex(0, 25)
+                };
+
+                for (int i  = 0; i < commands.Count; i++)
                 {
-                    case "discord":
+                    //если пользователь ввел в чат существующую команду и она активна
+                    if (e.Command.CommandText.ToLower() == commands[i].Title.ToLower() && commands[i].IsActive == true)
+                    {
+                        //прохожусь по словарю с переменными (проверяю тем самым есть ли какие то переменные в команде)
+                        foreach(var variable in variables)
                         {
-                            client.SendMessage(e.Command.ChatMessage.Channel, "Discord: https://discord.gg/d7zUqVYXYh");
-                        }
-                        break;
-
-                    case "donate":
-                        {
-                            client.SendMessage(e.Command.ChatMessage.Channel, "Donate: https://www.donationalerts.com/r/shawtygold");
-                        }
-                        break;
-
-                    case "youtube":
-                        {
-                            client.SendMessage(e.Command.ChatMessage.Channel, "YouTube: https://www.youtube.com/channel/UCJixaKetI10TJTJ4YX2V_Kg");
-                        }
-                        break;
-
-                    case "telegram":
-                        {
-                            client.SendMessage(e.Command.ChatMessage.Channel, "Telegram: https://t.me/+nAFnNgTUJq85OTM6");
-                        }
-                        break;
-
-                    case "ручник":
-                        {
-                            int number = GetRandomIndex(0, 25);
-                            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" размер твоего ручника - {number} см!");
-                        }
-                        break;
-
-                    case "обнять":
-                        {
-                            int index = GetRandomIndex(0, userNames.Count - 1);
-                            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" обнял {userNames[index]}");
-                        }
-                        break;
-
-                    case "поцелуй":
-                        {
-                            int index = GetRandomIndex(0, userNames.Count - 1);
-                            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" поцеловал {userNames[index]}");
-                        }
-                        break;
-
-                    case "рукопожатие":
-                        {
-                            int index = GetRandomIndex(0, userNames.Count - 1);
-                            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" пожал руку {userNames[index]}");
-                        }
-                        break;
-
-                    case "вертушка":
-                        {
-                            int index = GetRandomIndex(0, userNames.Count - 1);
-                            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" прописал с вертухи {userNames[index]}");
-                        }
-                        break;
-
-                    default:
-                        {
-                            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + ", такой команды не существует!");
-                        }
-                        break;
+                            //если команда содержит какую либо переменную 
+                            if (commands[i].ResponceType.Contains(variable.Key))
+                            {
+                                //заменяю в responceType переменную(ключ) на метод(занчение)
+                                commands[i].ResponceType = commands[i].ResponceType.Replace(variable.Key, variable.Value);
+                            }
+                        }                      
+                        
+                        //отправка сообщение в чат
+                        client.SendMessage(e.Command.ChatMessage.Channel, commands[i].ResponceType);
+                    }
+                    
                 }
+
+
+                //switch (e.Command.CommandText.ToLower())
+                //{
+                //    case "discord":
+                //        {
+                //            client.SendMessage(e.Command.ChatMessage.Channel, "Discord: https://discord.gg/d7zUqVYXYh");
+                //        }
+                //        break;
+
+                //    case "donate":
+                //        {
+                //            client.SendMessage(e.Command.ChatMessage.Channel, "Donate: https://www.donationalerts.com/r/shawtygold");
+                //        }
+                //        break;
+
+                //    case "youtube":
+                //        {
+                //            client.SendMessage(e.Command.ChatMessage.Channel, "YouTube: https://www.youtube.com/channel/UCJixaKetI10TJTJ4YX2V_Kg");
+                //        }
+                //        break;
+
+                //    case "telegram":
+                //        {
+                //            client.SendMessage(e.Command.ChatMessage.Channel, "Telegram: https://t.me/+nAFnNgTUJq85OTM6");
+                //        }
+                //        break;
+
+                //    case "ручник":
+                //        {
+                //            int number = GetRandomIndex(0, 25);
+                //            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" размер твоего ручника - {number} см!");
+                //        }
+                //        break;
+
+                //    case "обнять":
+                //        {
+                //            int index = GetRandomIndex(0, UserNames.Count - 1);
+                //            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" обнял {UserNames[index]}");
+                //        }
+                //        break;
+
+                //    case "поцелуй":
+                //        {
+                //            int index = GetRandomIndex(0, UserNames.Count - 1);
+                //            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" поцеловал {UserNames[index]}");
+                //        }
+                //        break;
+
+                //    case "рукопожатие":
+                //        {
+                //            int index = GetRandomIndex(0, UserNames.Count - 1);
+                //            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" пожал руку {UserNames[index]}");
+                //        }
+                //        break;
+
+                //    case "вертушка":
+                //        {
+                //            int index = GetRandomIndex(0, UserNames.Count - 1);
+                //            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" прописал с вертухи {UserNames[index]}");
+                //        }
+                //        break;
+
+                //    default:
+                //        {
+                //            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + ", такой команды не существует!");
+                //        }
+                //        break;
+                //}
             }
             catch { }            
         }
@@ -164,7 +190,7 @@ namespace TwitchBot.MVVM.Model
             try
             {
                 //добавление имени пользователя при подключении             
-                userNames.Add(e.Username);
+                UserNames.Add(e.Username);
             }
             catch { }
         }
@@ -174,7 +200,7 @@ namespace TwitchBot.MVVM.Model
             try
             {
                 //удаление имени пользователя при отключении
-                userNames.Remove(e.Username);
+                UserNames.Remove(e.Username);
             }
             catch { }         
         }

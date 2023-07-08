@@ -6,5 +6,13 @@
     <DataTemplate DataType="{x:Type TypeName=vm:StartBotViewModel}">
         <view:StartBotView/>
     </DataTemplate>
+
+    <DataTemplate DataType="{x:Type TypeName=vm:CommandsViewModel}">
+        <view:CommandsView/>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type TypeName=vm:LoadingScreenViewModel}">
+        <view:LoadingScreenView/>
+    </DataTemplate>
     
 </ResourceDictionary>
