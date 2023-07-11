@@ -38,7 +38,7 @@ namespace TwitchBot.MVVM.ViewModel
 
         #region Properties
 
-        #region Naviagtion
+        public string AppTitle { get; set; } = "TwitchBot";
 
         private INavigationService _navigation;
         public INavigationService Navigation
@@ -46,19 +46,6 @@ namespace TwitchBot.MVVM.ViewModel
             get { return _navigation; }
             set { _navigation = value; OnPropertyChanged(); }
         }
-
-        #endregion
-
-        #region AppTitle
-
-        private string _appTitle = "TwitchBot";
-        public string AppTitle
-        {
-            get { return _appTitle; }
-            set { _appTitle = value; }
-        }
-
-        #endregion
 
         #endregion
 

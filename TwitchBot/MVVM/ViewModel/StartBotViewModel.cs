@@ -28,8 +28,6 @@ namespace TwitchBot.MVVM.ViewModel
 
         #region Properties
 
-        #region Navigation
-
         private INavigationService _navigation;
         public INavigationService Navigation
         {
@@ -37,9 +35,6 @@ namespace TwitchBot.MVVM.ViewModel
             set { _navigation = value; OnPropertyChanged(); }
         }
 
-        #endregion
-
-        #region IndicatorBackground
 
         private string _indicatorBackground = "#414141";
         public string IndicatorBackground
@@ -47,8 +42,6 @@ namespace TwitchBot.MVVM.ViewModel
             get { return _indicatorBackground; }
             set { _indicatorBackground = value; OnPropertyChanged(); }
         }
-
-        #endregion
 
         #endregion
 

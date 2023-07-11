@@ -24,8 +24,6 @@ namespace TwitchBot.MVVM.ViewModel
 
         #region Properties
 
-        #region Naviagtion
-
         private INavigationService _navigation;
         public INavigationService Navigation
         {
@@ -33,9 +31,6 @@ namespace TwitchBot.MVVM.ViewModel
             set { _navigation = value; OnPropertyChanged(); }
         }
 
-        #endregion
-
-        #region StaticCommands
 
         private static List<Command> _staticCommands;
         public static List<Command> StaticCommands
@@ -44,9 +39,6 @@ namespace TwitchBot.MVVM.ViewModel
             set { _staticCommands = value; }
         }
 
-        #endregion
-
-        #region Commands
 
         private List<Command> _commands;
         public List<Command> Commands
@@ -57,12 +49,9 @@ namespace TwitchBot.MVVM.ViewModel
 
         #endregion
 
-        #endregion
-
         #region Commands
 
         public ICommand BackCommand { get; set; }
-
         private void Back(object obj) => Navigation.NavigateTo<StartBotViewModel>();
 
         #endregion

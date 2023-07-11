@@ -16,14 +16,12 @@ namespace TwitchBot.MVVM.ViewModel
 
         #region Properties
 
-        #region Navigation
         private INavigationService _navigation;
         public INavigationService Navigation
         {
             get { return _navigation; }
             set { _navigation = value; OnPropertyChanged(); }
         }
-        #endregion
 
         #endregion
     }
