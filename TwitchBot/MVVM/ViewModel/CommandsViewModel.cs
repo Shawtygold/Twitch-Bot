@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using TwitchBot.Core;
 using TwitchBot.MVVM.Model;
 using TwitchBot.Services;
 
@@ -13,6 +15,8 @@ namespace TwitchBot.MVVM.ViewModel
         public CommandsViewModel(INavigationService naviagtion)
         {
             Navigation = naviagtion;
+
+            BackCommand = new RelayCommand(Back);
 
             //загрузка команд
             LoadCommand();
@@ -52,6 +56,14 @@ namespace TwitchBot.MVVM.ViewModel
         }
 
         #endregion
+
+        #endregion
+
+        #region Commands
+
+        public ICommand BackCommand { get; set; }
+
+        private void Back(object obj) => Navigation.NavigateTo<StartBotViewModel>();
 
         #endregion
 
