@@ -90,8 +90,7 @@ namespace TwitchBot.MVVM.Model
                 {
                     ["{random_chatter}"] = UserNames[GetRandomNumber(0, UserNames.Count - 1)],
                     ["{user}"] = e.Command.ChatMessage.Username,
-                    ["{channel}"] = e.Command.ChatMessage.Channel,
-                    //["{color}"] = ChangeColor(e.Command.ChatMessage.Channel)
+                    ["{channel}"] = e.Command.ChatMessage.Channel
                 };
 
                 //прохожусь по командам

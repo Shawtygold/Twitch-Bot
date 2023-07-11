@@ -20,18 +20,18 @@ namespace TwitchBot.MVVM.ViewModel
             CloseCommand = new RelayCommand(Close);
             MinimizeCommand = new RelayCommand(Minimize);
 
-            using (ApplicationContext db = new())
-            {
-                Command c = new()
-                {
-                    Title = "discord",
-                    ResponceType = "Discord: ///",
-                    IsActive = true
-                };
+            //using (ApplicationContext db = new())
+            //{
+            //    Command c = new()
+            //    {
+            //        Title = "discord",
+            //        ResponceType = "Discord: ///",
+            //        IsActive = true
+            //    };
 
-                db.Add(c);
-                db.SaveChanges();
-            }
+            //    db.Add(c);
+            //    db.SaveChanges();
+            //}
 
             Navigation.NavigateTo<StartBotViewModel>();
         }
