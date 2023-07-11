@@ -14,6 +14,23 @@ namespace TwitchBot.MVVM.Model
     {      
         private TwitchClient client;
 
+        #region Properties
+
+        #region BotSettings
+        private string Channel { get; set; } = "shawtygoldq";
+        private string OAuth { get; set; } = "bvdwgq2k2sqte0ctvpzwbjpgj0f5y6";
+        private string BotName { get; set; } = "shawtygoldqbot";
+        internal string BotStatus { get; set; } = "Off";
+        #endregion
+
+        private static System.Timers.Timer Timer { get; set; }
+        private List<string> UserNames { get; set; } = new();
+        private List<string> BadWords { get; set; } = new() { "гомик", "гомосек", "негр", "негритянка", "негрунчик", "негрилла", "кацап", "москаль", "русня", "хохол", "укроп", "жид", "хач", "даун", "педик", "педераст", "пидорас", "пидор", "пидарас", "гей", "шлюха", "блядота", "мать ебал", "иди нахуй" };
+        private List<string> Messages { get; set; } = new();
+        private Dictionary<string, string> Variables { get; set; }
+        private List<Command> Commands { get; set; }
+
+        #endregion
 
         public ShawtygoldqBot()
         {
@@ -42,26 +59,7 @@ namespace TwitchBot.MVVM.Model
             catch (Exception ex) { MessageBox.Show(ex.Message); }          
         }
 
-        #region Properties
-
-        #region BotSettings
-        private string Channel { get; set; } = "shawtygoldq";
-        private string OAuth { get; set; } = "bvdwgq2k2sqte0ctvpzwbjpgj0f5y6";
-        private string BotName { get; set; } = "shawtygoldqbot";
-        internal string BotStatus { get; set; } = "Off";
-        #endregion
-
-        private static System.Timers.Timer timer { get; set; }
-        private List<string> UserNames { get; set; } = new();
-        private List<string> BadWords { get; set; } = new() { "гомик", "гомосек", "негр", "негритянка", "негрунчик", "негрилла", "кацап", "москаль", "русня", "хохол", "укроп", "жид", "хач", "даун", "педик", "педераст", "пидорас", "пидор", "пидарас", "гей", "шлюха", "блядота", "мать ебал", "иди нахуй" };
-        private List<string> Messages { get; set; } = new();
-        private Dictionary<string, string> Variables { get; set; }
-        private List<Command> Commands { get; set; }
-
-        #endregion
-
         #region Events 
-
 
         private void Client_OnConnected(object? sender, OnConnectedArgs e)
         {
@@ -76,8 +74,8 @@ namespace TwitchBot.MVVM.Model
 
         private void Client_OnDisconnected(object? sender, TwitchLib.Communication.Events.OnDisconnectedEventArgs e)
         {
-            timer.Stop();
-            timer.Dispose();
+            Timer.Stop();
+            Timer.Dispose();
         }
 
         private void Client_OnJoinedChannel(object? sender, OnJoinedChannelArgs e)
@@ -85,7 +83,7 @@ namespace TwitchBot.MVVM.Model
             try
             {
                 client.SendMessage(e.Channel, "Приветствую! Не проказничать в чате!");
-                timer.Start();
+                Timer.Start();
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
@@ -279,7 +277,6 @@ namespace TwitchBot.MVVM.Model
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
-        //почему-то срабатывает с реальными пользователями через некоторое время, а не сразу, возможно это твич хренью страдает
         private void Client_OnUserJoined(object? sender, OnUserJoinedArgs e)
         {
             try
@@ -287,7 +284,7 @@ namespace TwitchBot.MVVM.Model
                 //добавление имени пользователя при подключении             
                 UserNames.Add(e.Username);
                 //приветствие
-                client.SendMessage(e.Channel, $"Привет,{e.Username}!");
+                client.SendMessage(e.Channel, $"Привет, {e.Username}!");
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
@@ -350,25 +347,13 @@ namespace TwitchBot.MVVM.Model
 
         private void SetTimer()
         {
-            timer = new System.Timers.Timer(15000);
-            timer.Elapsed += Timer_Elapsed;
-            timer.AutoReset = true;
-            timer.Enabled = true;
+            Timer = new System.Timers.Timer(15000);
+            Timer.Elapsed += Timer_Elapsed;
+            Timer.AutoReset = true;
+            Timer.Enabled = true;
         }
+
         #endregion
     }
-
-    //private void ChangeColor(string channel)
-    //{
-    //    //получение списка цветов
-    //    List<ChatColorPresets> colors = Enum.GetValues(typeof(ChatColorPresets)).Cast<ChatColorPresets>().ToList();
-
-    //    //рандомный индекс
-    //    int rndIndex = GetRandomNumber(0, colors.Count);
-
-    //    //изменение цвета
-    //    client.ChangeChatColor(channel, colors[rndIndex]);
-
-    //}
 }
 
