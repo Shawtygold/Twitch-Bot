@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using TwitchLib.Client;
@@ -16,8 +18,6 @@ namespace TwitchBot.MVVM.Model
         
         private TwitchClient client;
 
-        Dictionary<string, string> variables;
-
         public ShawtygoldqBot()
         {
             ConnectionCredentials credentials = new ConnectionCredentials("shawtygoldqbot", "bvdwgq2k2sqte0ctvpzwbjpgj0f5y6");
@@ -32,6 +32,9 @@ namespace TwitchBot.MVVM.Model
             client.OnUserJoined += Client_OnUserJoined;
             client.OnUserLeft += Client_OnUserLeft;
             client.OnModeratorJoined += Client_OnModeratorJoined;
+
+            //получение списка команд из бд
+            commands = DataWorker.GetCommands();
         }
 
         #region Properties
@@ -39,7 +42,8 @@ namespace TwitchBot.MVVM.Model
         public string BotStatus { get; set; } = "Off";
         private List<string> UserNames { get; set; } = new();
         private List<string> BadWords { get; set; } = new() { "гомик", "гомосек", "негр", "негритянка", "негрунчик", "негрилла", "кацап", "москаль", "русня", "хохол", "укроп", "жид", "хач", "даун", "педик", "педераст", "пидорас", "пидор", "пидарас", "гей", "шлюха", "блядота", "мать ебал", "иди нахуй" };
-
+        private Dictionary<string, string> variables { get; set; }
+        private List<Command> commands;
         #endregion
 
         #region Events 
@@ -75,41 +79,96 @@ namespace TwitchBot.MVVM.Model
             catch { }                  
         }
 
+        //Я решил не просто взять и обработать команды в коде. Я решил добавить возможность создавать команды самому не заходя внутрь проекта,
+        //используя при этом переменные, которые в свою очередь будут заменяться на соответсвующие значения.
         private void Client_OnChatCommandReceived(object? sender, OnChatCommandReceivedArgs e)
         {
             try
             {
-
-                List<Command> commands = DataWorker.GetCommands();
-
+                //словарь с переменными
                 variables = new Dictionary<string, string>()
-                {   //имя рандомного учатсика чата
-                    ["{random_chatter}"] = UserNames[GetRandomIndex(0, UserNames.Count-1)],
-                    ["{user}"] = e.Command.ChatMessage.Username
-                    
-                    //["фывфы "] = GetRandomIndex(0, 25)
+                {
+                    ["{random_chatter}"] = UserNames[GetRandomNumber(0, UserNames.Count - 1)],
+                    ["{user}"] = e.Command.ChatMessage.Username,
+                    ["{channel}"] = e.Command.ChatMessage.Channel,
+                    //["{color}"] = ChangeColor(e.Command.ChatMessage.Channel)
                 };
 
+                //прохожусь по командам
                 for (int i  = 0; i < commands.Count; i++)
                 {
                     //если пользователь ввел в чат существующую команду и она активна
                     if (e.Command.CommandText.ToLower() == commands[i].Title.ToLower() && commands[i].IsActive == true)
                     {
-                        //прохожусь по словарю с переменными (проверяю тем самым есть ли какие то переменные в команде)
-                        foreach(var variable in variables)
+                        //для начала надо проверить есть ли в команде переменные
+                        //прохожусь по словарю с переменными
+                        foreach (var variable in variables)
                         {
-                            //если команда содержит какую либо переменную 
+                            //если команда содержит какую либо переменную(ключ) в словаре
                             if (commands[i].ResponceType.Contains(variable.Key))
                             {
                                 //заменяю в responceType переменную(ключ) на метод(занчение)
                                 commands[i].ResponceType = commands[i].ResponceType.Replace(variable.Key, variable.Value);
                             }
-                        }                      
-                        
+                            //если команда содержит переменную random 
+                            else if (commands[i].ResponceType.Contains("{random")) //например: (random(5, 10)))
+                            {
+                                try
+                                {
+                                    //разделение текста команды на слова
+                                    List<string> words = commands[i].ResponceType.Split(" ").ToList();
+                                    //здесь будут храниться все переменные random (пользователь может ввести несколько таких переменных в одну команду)
+                                    List<string> variables = new();
+                                    //индексы
+                                    List<int> indexes = new();
+
+                                    int countWords = 0;
+
+                                    for (int w = 0; w < words.Count; w++)
+                                    {
+                                        if (words[w].Contains("{random"))
+                                        {
+                                            //подсчет количества таких переменных в строке команды
+                                            countWords++;
+                                            //добавление переменной в список переменных
+                                            variables.Add(words[w]);
+                                            //добавление индекса переменной в список индексов
+                                            indexes.Add(w);
+                                        }
+                                    }
+
+                                    for (int v = 0; v < variables.Count; v++)
+                                    {
+                                        //получаю индексы символов для нахождения чисел, которые переданы в скобках 
+                                        int index = variables[v].IndexOf('(');
+                                        int index2 = variables[v].IndexOf(',');
+                                        int index3 = variables[v].IndexOf(')');
+
+                                        //получение первого числа
+                                        int number1 = Convert.ToInt32(variables[v].Substring(index + 1, index2 - index - 1));
+                                        //получение второго числа
+                                        int number2 = Convert.ToInt32(variables[v].Substring(index2 + 1, index3 - index2 - 1));
+
+                                        //рандомное число от первого числа до второго числа
+                                        int rndNumber = GetRandomNumber(Convert.ToInt32(number1), Convert.ToInt32(number2));
+
+                                        //замена переменной на значение
+                                        variables[v] = $"{rndNumber}";
+
+                                        //вставка значения по индексу
+                                        words[indexes[v]] = variables[v];
+                                    }
+
+                                    //объединение
+                                    commands[i].ResponceType = string.Join(" ", words);
+                                }
+                                catch { }                                                             
+                            }
+                        }
+
                         //отправка сообщение в чат
                         client.SendMessage(e.Command.ChatMessage.Channel, commands[i].ResponceType);
-                    }
-                    
+                    } 
                 }
 
 
@@ -243,14 +302,28 @@ namespace TwitchBot.MVVM.Model
         }
 
         //получение рандомного индекса
-        private int GetRandomIndex(int from, int to)
+        private int GetRandomNumber(int from, int to)
         {
             Random rnd = new();
-            int index = rnd.Next(from, to);
+            int number = rnd.Next(from, to);
 
-            return index;
-        }
+            return number;
+        }       
+    }
+
+        //private void ChangeColor(string channel)
+        //{
+        //    //получение списка цветов
+        //    List<ChatColorPresets> colors = Enum.GetValues(typeof(ChatColorPresets)).Cast<ChatColorPresets>().ToList();
+
+        //    //рандомный индекс
+        //    int rndIndex = GetRandomNumber(0, colors.Count);
+
+        //    //изменение цвета
+        //    client.ChangeChatColor(channel, colors[rndIndex]);
+           
+        //}
 
         #endregion
-    }
 }
+

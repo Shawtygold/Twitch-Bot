@@ -24,8 +24,8 @@ namespace TwitchBot.MVVM.ViewModel
             {
                 Command c = new()
                 {
-                    Title = "discordoa",
-                    ResponceType = "{user} приветствует {user}!",
+                    Title = "discord",
+                    ResponceType = "Discord: ///",
                     IsActive = true
                 };
 
