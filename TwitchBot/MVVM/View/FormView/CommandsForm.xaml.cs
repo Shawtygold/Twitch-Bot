@@ -23,5 +23,10 @@ namespace TwitchBot.MVVM.View.FormView
         {
             InitializeComponent();
         }
+
+        private void Border_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
     }
 }

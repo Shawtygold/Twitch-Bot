@@ -341,6 +341,7 @@
 
         <ListView Grid.Row="1"
                   ItemsSource="{Binding Commands}"
+                  SelectedItem="{Binding SelectedItem}"
                   ItemContainerStyle="{DynamicResource Command}"
                   BorderThickness="0"
                   Background="Transparent"
@@ -353,10 +354,13 @@
                     HorizontalAlignment="Right"
                     Margin="0,0,20,20">
             <Button Style="{DynamicResource DeleteButton}"
+                    Command="{Binding DeleteCommand}"
                     Margin="0,0,7,0"/>
             <Button Style="{DynamicResource EditButton}"
+                    Command="{Binding EditCommand}"
                     Margin="0,0,7,0"/>
-            <Button Style="{DynamicResource AddButton}"/>
+            <Button Style="{DynamicResource AddButton}"
+                    Command="{Binding AddCommand}"/>
         </StackPanel>
     </Grid>
 </UserControl>

@@ -215,7 +215,7 @@
             </Grid.RowDefinitions>
 
             <!--TitleBar-->
-            <Border>
+            <Border MouseLeftButtonDown="Border_MouseLeftButtonDown">
                 <Grid>
                     <TextBlock Text="{Binding AppTitle}"
                                FontSize="12"
@@ -227,10 +227,12 @@
                                 VerticalAlignment="Top"
                                 HorizontalAlignment="Right">
                         <Button Style="{DynamicResource MinimizeButton}"
-                                Command="{Binding MinimizeCommand}"/>
+                                Command="{Binding MinimizeCommand}"
+                                CommandParameter="{Binding ElementName=Form}"/>
 
                         <Button Style="{DynamicResource CloseButton}"
-                                Command="{Binding CloseCommand}"/>
+                                Command="{Binding CloseCommand}"
+                                CommandParameter="{Binding ElementName=Form}"/>
                     </StackPanel>
                 </Grid>
             </Border>

@@ -13,22 +13,24 @@ namespace TwitchBot.MVVM.Model
     class ShawtygoldqBot
     {      
         private TwitchClient client;
+        private static System.Timers.Timer timer;
+
+        #region BotSettings
+
+        private readonly string channel = "shawtygoldq";
+        private readonly string oAuth = "bvdwgq2k2sqte0ctvpzwbjpgj0f5y6";
+        private readonly string botName = "shawtygoldqbot";
+
+        #endregion
 
         #region Properties
 
-        #region BotSettings
-        private string Channel { get; set; } = "shawtygoldq";
-        private string OAuth { get; set; } = "bvdwgq2k2sqte0ctvpzwbjpgj0f5y6";
-        private string BotName { get; set; } = "shawtygoldqbot";
         internal string BotStatus { get; set; } = "Off";
-        #endregion
-
-        private static System.Timers.Timer Timer { get; set; }
+        private Dictionary<string, string> Variables { get; set; }
+        private List<Command> Commands { get; set; }
         private List<string> UserNames { get; set; } = new();
         private List<string> BadWords { get; set; } = new() { "гомик", "гомосек", "негр", "негритянка", "негрунчик", "негрилла", "кацап", "москаль", "русня", "хохол", "укроп", "жид", "хач", "даун", "педик", "педераст", "пидорас", "пидор", "пидарас", "гей", "шлюха", "блядота", "мать ебал", "иди нахуй" };
         private List<string> Messages { get; set; } = new();
-        private Dictionary<string, string> Variables { get; set; }
-        private List<Command> Commands { get; set; }
 
         #endregion
 
@@ -36,10 +38,10 @@ namespace TwitchBot.MVVM.Model
         {
             try
             {
-                ConnectionCredentials credentials = new (BotName, OAuth);
+                ConnectionCredentials credentials = new (botName, oAuth);
 
                 client = new TwitchClient();
-                client.Initialize(credentials, Channel);
+                client.Initialize(credentials, channel);
 
                 client.OnConnected += Client_OnConnected;
                 client.OnJoinedChannel += Client_OnJoinedChannel;
@@ -65,17 +67,19 @@ namespace TwitchBot.MVVM.Model
         {
             try
             {
-                client.SendMessage(Channel, "Присоединился");
-
-                //timer = new Timer(TimerCallback, Channel, TimeSpan.Zero, TimeSpan.FromSeconds(15));
+                client.SendMessage(channel, "Присоединился");                
             }
             catch { }
         }
 
         private void Client_OnDisconnected(object? sender, TwitchLib.Communication.Events.OnDisconnectedEventArgs e)
         {
-            Timer.Stop();
-            Timer.Dispose();
+            try
+            {
+                timer.Stop();
+                timer.Dispose();
+            }
+            catch(Exception ex) { MessageBox.Show(ex.Message); }
         }
 
         private void Client_OnJoinedChannel(object? sender, OnJoinedChannelArgs e)
@@ -83,7 +87,8 @@ namespace TwitchBot.MVVM.Model
             try
             {
                 client.SendMessage(e.Channel, "Приветствую! Не проказничать в чате!");
-                Timer.Start();
+                //запуск таймера
+                timer.Start();
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
@@ -93,7 +98,7 @@ namespace TwitchBot.MVVM.Model
             //если бот подключен к каналу
             if (client.JoinedChannels.Count != 0)
             {
-                client.SendMessage(Channel, "Нажимая на кнопку \"Отслеживать\" Вы даёте +1000 к мотивации стримера, а также Вы будете в курсе о всех последующих стримах! Приятного просмотра!");
+                client.SendMessage(channel, "Нажимая на кнопку \"Отслеживать\" Вы даёте +1000 к мотивации стримера, а также Вы будете в курсе о всех последующих стримах! Приятного просмотра!");
             }
         }
 
@@ -145,7 +150,7 @@ namespace TwitchBot.MVVM.Model
                             //если команда содержит какую либо переменную(ключ) в словаре
                             if (Commands[i].ResponceType.Contains(variable.Key))
                             {
-                                //заменяю в responceType переменную(ключ) на метод(занчение)
+                                //заменяю в responceType переменную(ключ) на метод(значение)
                                 Commands[i].ResponceType = Commands[i].ResponceType.Replace(variable.Key, variable.Value);
                             }
                             //если команда содержит переменную random 
@@ -158,14 +163,11 @@ namespace TwitchBot.MVVM.Model
                                 //индексы
                                 List<int> indexes = new();
 
-                                int countWords = 0;
 
                                 for (int j = 0; j < words.Count; j++)
                                 {
                                     if (words[j].Contains("{random"))
                                     {
-                                        //подсчет количества таких переменных в строке команды
-                                        countWords++;
                                         //добавление переменной в список переменных
                                         variables.Add(words[j]);
                                         //добавление индекса переменной в список индексов
@@ -204,75 +206,6 @@ namespace TwitchBot.MVVM.Model
                         client.SendMessage(e.Command.ChatMessage.Channel, Commands[i].ResponceType);
                     } 
                 }
-
-
-                //switch (e.Command.CommandText.ToLower())
-                //{
-                //    case "discord":
-                //        {
-                //            client.SendMessage(e.Command.ChatMessage.Channel, "Discord: https://discord.gg/d7zUqVYXYh");
-                //        }
-                //        break;
-
-                //    case "donate":
-                //        {
-                //            client.SendMessage(e.Command.ChatMessage.Channel, "Donate: https://www.donationalerts.com/r/shawtygold");
-                //        }
-                //        break;
-
-                //    case "youtube":
-                //        {
-                //            client.SendMessage(e.Command.ChatMessage.Channel, "YouTube: https://www.youtube.com/channel/UCJixaKetI10TJTJ4YX2V_Kg");
-                //        }
-                //        break;
-
-                //    case "telegram":
-                //        {
-                //            client.SendMessage(e.Command.ChatMessage.Channel, "Telegram: https://t.me/+nAFnNgTUJq85OTM6");
-                //        }
-                //        break;
-
-                //    case "ручник":
-                //        {
-                //            int number = GetRandomIndex(0, 25);
-                //            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" размер твоего ручника - {number} см!");
-                //        }
-                //        break;
-
-                //    case "обнять":
-                //        {
-                //            int index = GetRandomIndex(0, UserNames.Count - 1);
-                //            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" обнял {UserNames[index]}");
-                //        }
-                //        break;
-
-                //    case "поцелуй":
-                //        {
-                //            int index = GetRandomIndex(0, UserNames.Count - 1);
-                //            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" поцеловал {UserNames[index]}");
-                //        }
-                //        break;
-
-                //    case "рукопожатие":
-                //        {
-                //            int index = GetRandomIndex(0, UserNames.Count - 1);
-                //            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" пожал руку {UserNames[index]}");
-                //        }
-                //        break;
-
-                //    case "вертушка":
-                //        {
-                //            int index = GetRandomIndex(0, UserNames.Count - 1);
-                //            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + $" прописал с вертухи {UserNames[index]}");
-                //        }
-                //        break;
-
-                //    default:
-                //        {
-                //            client.SendMessage(e.Command.ChatMessage.Channel, e.Command.ChatMessage.Username + ", такой команды не существует!");
-                //        }
-                //        break;
-                //}
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
@@ -337,7 +270,7 @@ namespace TwitchBot.MVVM.Model
         }
 
         //получение рандомного индекса
-        private int GetRandomNumber(int from, int to)
+        private static int GetRandomNumber(int from, int to)
         {
             Random rnd = new();
             int number = rnd.Next(from, to);
@@ -347,10 +280,11 @@ namespace TwitchBot.MVVM.Model
 
         private void SetTimer()
         {
-            Timer = new System.Timers.Timer(15000);
-            Timer.Elapsed += Timer_Elapsed;
-            Timer.AutoReset = true;
-            Timer.Enabled = true;
+            //таймер на 15 мин
+            timer = new System.Timers.Timer(900000);
+            timer.Elapsed += Timer_Elapsed;
+            timer.AutoReset = true;
+            timer.Enabled = true;
         }
 
         #endregion
