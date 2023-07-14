@@ -12,8 +12,14 @@ namespace TwitchBot.MVVM.Model
 {
     class ShawtygoldqBot
     {      
+        //Twitch client
         private TwitchClient client;
+
+        //таймер
         private static System.Timers.Timer timer;
+
+        //количество сообщений за период от последнего срабатывания таймера
+        private int countMessagePeriod = 0;
 
         #region BotSettings
 
@@ -91,15 +97,6 @@ namespace TwitchBot.MVVM.Model
                 timer.Start();
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
-        }
-
-        private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
-        {
-            //если бот подключен к каналу
-            if (client.JoinedChannels.Count != 0)
-            {
-                client.SendMessage(channel, "Нажимая на кнопку \"Отслеживать\" Вы даёте +1000 к мотивации стримера, а также Вы будете в курсе о всех последующих стримах! Приятного просмотра!");
-            }
         }
 
         private void Client_OnMessageReceived(object? sender, OnMessageReceivedArgs e)
@@ -239,6 +236,15 @@ namespace TwitchBot.MVVM.Model
                 client.SendMessage(e.Channel, $"Модератор {e.Username} на связи!");
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+
+        private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        {
+            //если бот подключен к каналу
+            if (client.JoinedChannels.Count != 0)
+            {
+                client.SendMessage(channel, "Нажимая на кнопку \"Отслеживать\" Вы даёте +1000 к мотивации стримера, а также Вы будете в курсе о всех последующих стримах! Приятного просмотра!");
+            }
         }
 
         #endregion

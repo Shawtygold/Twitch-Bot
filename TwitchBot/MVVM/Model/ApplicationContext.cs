@@ -10,6 +10,7 @@ namespace TwitchBot.MVVM.Model
     internal class ApplicationContext : DbContext
     {
         public DbSet<Command> Commands => Set<Command>();
+
         public ApplicationContext() => Database.EnsureCreated();
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
