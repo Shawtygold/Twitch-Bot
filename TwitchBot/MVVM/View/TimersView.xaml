@@ -104,6 +104,7 @@
                                                  Margin="0,0,10,0"
                                                  IsChecked="{Binding IsActive}"                                                
                                                  VerticalAlignment="Center"/>
+
                             </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -204,7 +205,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
+        
         <!--EditButton-->
         <Style TargetType="Button" x:Key="EditButton">
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -324,19 +325,48 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <ListView ItemContainerStyle="{DynamicResource Timer}"
+        <Button Style="{DynamicResource BackButton}"
+                Command="{Binding BackCommand}"
+                HorizontalAlignment="Left"
+                Margin="20,0,0,0"/>
+
+        <ListView Grid.Row="1" 
+                  SelectedItem="{Binding SelectedItem}"
+                  ItemContainerStyle="{DynamicResource Timer}"
                   Background="Transparent"
                   BorderThickness="0"
-                  ItemsSource="{Binding Timers}">
+                  ItemsSource="{Binding Timers}"
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  ScrollViewer.VerticalScrollBarVisibility="Disabled">
             
         </ListView>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Margin="0,0,20,20"
+                    Grid.Row="2">
+
+            <Button Style="{DynamicResource DeleteButton}"
+                    Command="{Binding DeleteCommand}"
+                    Margin="0,0,7,0"/>
+
+            <Button Style="{DynamicResource EditButton}"
+                    Command="{Binding EditCommand}"
+                    Margin="0,0,7,0"/>
+
+            <Button Style="{DynamicResource AddButton}"
+                    HorizontalAlignment="Right"
+                    Command="{Binding AddCommand}"/>
+        </StackPanel>
+
     </Grid>
 </UserControl>

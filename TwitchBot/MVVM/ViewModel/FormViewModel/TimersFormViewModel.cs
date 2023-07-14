@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using TwitchBot.Core;
+using System.Windows;
 using TwitchBot.MVVM.Model;
+using TwitchBot.Core;
 
 namespace TwitchBot.MVVM.ViewModel.FormViewModel
 {
-    internal class CommandsFormViewModel : Core.ViewModel
+    class TimersFormViewModel : Core.ViewModel
     {
-        //конструктор срабатывающий при добавлении
-        public CommandsFormViewModel(string action)
+        public TimersFormViewModel(string action)
         {
             Action = action;
 
@@ -22,8 +21,7 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
             AcceptCommand = new RelayCommand(Accept);
         }
 
-        //конструктор срабатывающий при редактировании
-        public CommandsFormViewModel(string action, Command command)
+        public TimersFormViewModel(string action, Timer timer)
         {
             Action = action;
 
@@ -31,14 +29,14 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
             MinimizeCommand = new RelayCommand(Minimize);
             AcceptCommand = new RelayCommand(Accept);
 
-            if(command != null)
+            if (timer != null)
             {
-                //заполнение значений
-                Id = command.Id;
-                Title = command.Title;
-                ResponceType = command.ResponceType;
-                IsActive = command.IsActive;
-            }       
+                Id = timer.Id;
+                Title = timer.Title;
+                Interval = timer.Interval;
+                ResponceMessage = timer.ResponceMessage;
+                IsActive = timer.IsActive;
+            }
         }
 
         #region Properties
@@ -56,11 +54,19 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
         }
 
 
-        private string _responceType = "";
-        public string ResponceType
+        private int _interval = 0;
+        public int Interval
         {
-            get { return _responceType; }
-            set { _responceType = value; OnPropertyChanged(); }
+            get { return _interval; }
+            set {  _interval = value;  OnPropertyChanged(); }
+        }
+
+
+        private string _responceMessage = "";
+        public string ResponceMessage
+        {
+            get { return _responceMessage; }
+            set { _responceMessage = value; OnPropertyChanged(); }
         }
 
 
@@ -88,42 +94,44 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
         }
         private void Minimize(object obj)
         {
-            if(obj is Window form)
+            if (obj is Window form)
             {
                 form.WindowState = WindowState.Minimized;
             }
         }
         private void Accept(object obj)
         {
-            if(obj is Window form)
+            if (obj is Window form)
             {
                 //получение сообщения о правильности ввода данных
-                string message = DataWorker.InputValidation(Title, ResponceType);
+                string message = DataWorker.InputValidation(Title, ResponceMessage, Interval);
 
                 if (message == "Ok")
                 {
-                    if(Action == "Добавление")
+                    if (Action == "Добавление")
                     {
                         //вывод сообщения о том была ли добавлена команда
-                        MessageBox.Show(DataWorker.GetMessageAboutAction(DataWorker.AddCommand(new Command()
+                        MessageBox.Show(DataWorker.GetMessageAboutAction(DataWorker.AddTimer(new Timer()
                         {
                             Title = Title,
-                            ResponceType = ResponceType,
+                            ResponceMessage = ResponceMessage,
+                            Interval = Interval,
                             IsActive = true
 
-                        }), msgTrue: "Команда успешно добавлена!", msgFalse:"Произошла ошибка. Команда не добавлена!"));
+                        }), msgTrue: "Таймер успешно добавлен!", msgFalse: "Произошла ошибка. Таймер не добавлен!"));
                     }
-                    else if(Action == "Редактирование")
+                    else if (Action == "Редактирование")
                     {
                         //вывод сообщения о том была ли отредактирована команда
-                        MessageBox.Show(DataWorker.GetMessageAboutAction(DataWorker.EditCommand(new Command
+                        MessageBox.Show(DataWorker.GetMessageAboutAction(DataWorker.EditTimer(new Timer
                         {
                             Id = Id,
                             Title = Title,
-                            ResponceType = ResponceType,
+                            ResponceMessage = ResponceMessage,
+                            Interval = Interval,
                             IsActive = IsActive
 
-                        }), msgTrue: "Команда успешно отредактирована!", msgFalse: "Произошла ошибка. Команда не была отредактирована!"));
+                        }), msgTrue: "Таймер успешно отредактирован!", msgFalse: "Произошла ошибка. Таймер не был отредактирован!"));
                     }
 
                     //закрытие формы 
@@ -134,7 +142,11 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
                     //вывод сообщения о нарушениях ввода данных
                     MessageBox.Show(message);
                 }
-            }            
+            }
+            else
+            {
+                MessageBox.Show("Alo!");
+            }
         }
 
         #endregion

@@ -20,7 +20,8 @@ namespace TwitchBot.MVVM.ViewModel
             Navigation = navigation;
 
             StartBotCommand = new RelayCommand(StartBot);
-            NaviagteToCommandsCommand = new RelayCommand(NaviagteToCommands);
+            NaviagteToCommandsCommand = new RelayCommand(NavigateToCommands);
+            NaviagteToTimersCommand = new RelayCommand(NavigateToTimers);
         }
 
         //инициализирую бота
@@ -36,6 +37,7 @@ namespace TwitchBot.MVVM.ViewModel
         }
 
 
+        //индикатор на кнопке
         private string _indicatorBackground = "#414141";
         public string IndicatorBackground
         {
@@ -49,6 +51,7 @@ namespace TwitchBot.MVVM.ViewModel
 
         public ICommand StartBotCommand { get; set; }
         public ICommand NaviagteToCommandsCommand { get; set; }
+        public ICommand NaviagteToTimersCommand { get; set; }
 
         private void StartBot(object obj)
         {            
@@ -65,20 +68,39 @@ namespace TwitchBot.MVVM.ViewModel
                 bot.Disconnect();
             }
         }
-        private void NaviagteToCommands(object obj)
+        private void NavigateToCommands(object obj)
         {
             //экран загрузки
             Navigation.NavigateTo<LoadingScreenViewModel>();
 
             //получение списка команд из базы данных в фоновом потоке
-            Thread thread = new(GetData);
+            Thread thread = new(GetCommands);
             thread.Start();        
         }
-
-        private void GetData()
+        private void NavigateToTimers(object obj)
         {
+            //экран загрузки
+            Navigation.NavigateTo<LoadingScreenViewModel>();
+
+            //получение таймеров из базы данных в фоновом потоке
+            Thread thread = new(GetTimers);
+            thread.Start();
+        }
+
+
+        private void GetCommands()
+        {
+            //получение списка команд
             CommandsViewModel.StaticCommands = DataWorker.GetCommands();
+
             Navigation.NavigateTo<CommandsViewModel>();
+        }
+        private void GetTimers()
+        {
+            //получение таймеров
+            TimersViewModel.StaticTimers = DataWorker.GetTimers();
+
+            Navigation.NavigateTo<TimersViewModel>();
         }
 
         #endregion

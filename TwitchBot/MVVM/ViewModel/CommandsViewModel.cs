@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Input;
 using TwitchBot.Core;
@@ -34,16 +35,16 @@ namespace TwitchBot.MVVM.ViewModel
         }
 
 
-        private static List<Command> _staticCommands = new();
-        public static List<Command> StaticCommands
+        private static ObservableCollection<Command> _staticCommands = new();
+        public static ObservableCollection<Command> StaticCommands
         {
             get { return _staticCommands; }
             set { _staticCommands = value; }
         }
 
 
-        private List<Command> _commands = new();
-        public List<Command> Commands
+        private ObservableCollection<Command> _commands = new();
+        public ObservableCollection<Command> Commands
         {
             get { return _commands; }
             set { _commands = value; OnPropertyChanged(); }
@@ -123,9 +124,9 @@ namespace TwitchBot.MVVM.ViewModel
             Commands = StaticCommands;           
         }
 
+        //обновление списка команд
         private void UpdateCommands()
         {
-            //обновление команд
             Commands = DataWorker.GetCommands();
         }
 

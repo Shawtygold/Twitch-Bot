@@ -59,7 +59,7 @@ namespace TwitchBot.MVVM.Model
                 client.OnDisconnected += Client_OnDisconnected;
 
                 //получение списка команд из бд
-                Commands = DataWorker.GetCommands();
+                Commands = new(DataWorker.GetCommands());
 
                 //установка таймера
                 SetTimer();
