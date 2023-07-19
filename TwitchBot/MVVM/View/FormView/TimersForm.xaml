@@ -248,16 +248,34 @@
                          Margin="0,12,0,0" 
                          Style="{DynamicResource TextBoxStyle}"/>
 
+                <StackPanel Orientation="Horizontal"
+                            Margin="0,12,0,0">
+                    
+                    <!--Interval-->
+                    <TextBox x:Name="tbInterval" Text="{Binding Interval}"
+                             Tag="Interval (number)"
+                             Width="150"
+                             Style="{DynamicResource TextBoxStyle}"/>
+
+                    <!--AutoReset-->
+                    <ui:ToggleSwitch VerticalAlignment="Center"
+                              Margin="10,0,0,0"
+                              Content="AutoReset"
+                              IsChecked="{Binding AutoReset}"/>
+
+                </StackPanel>
+
                 <!--Interval-->
-                <TextBox x:Name="tbInterval" Text="{Binding Interval}"
-                         Tag="Interval (number)"
-                         Margin="0,12,0,0"
+                <TextBox x:Name="tbMessageInterval" 
+                         Margin="0,12,0,0" 
+                         Text="{Binding MessageInterval}"
+                         Tag="Interval in messages (number)"                         
                          Style="{DynamicResource TextBoxStyle}"/>
                 
                 <!--ResponceMessage-->
                 <TextBox x:Name="tbResponceMessage"
                          Text="{Binding ResponceMessage}" 
-                         Height="190"
+                         Height="150"
                          Tag="ResponceMessage"
                          Margin="0,12,0,0"
                          VerticalContentAlignment="Top"

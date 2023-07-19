@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows;
 
 namespace TwitchBot.MVVM.Model
 {
@@ -19,7 +21,7 @@ namespace TwitchBot.MVVM.Model
                     commands = new(db.Commands.ToList());
                 }
             }
-            catch { }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
 
             return commands;
         }
@@ -102,6 +104,27 @@ namespace TwitchBot.MVVM.Model
             return isDelete;
         }
 
+        internal static void ChangeIsEnabledInCommand(int id, bool isEnabled)
+        {
+            try
+            {
+                using (ApplicationContext db = new())
+                {
+                    for (int i = 0; i < db.Commands.ToList().Count; i++)
+                    {
+                        //поиск по Id в бд
+                        if (db.Commands.ToList()[i].Id == id)
+                        {
+                            //сохранение значения
+                            db.Commands.ToList()[i].IsEnabled = isEnabled;
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+
         #endregion
 
         #region Работа с Timer
@@ -118,12 +141,12 @@ namespace TwitchBot.MVVM.Model
                     timers = new(db.Timers.ToList());
                 }
             }
-            catch { }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
 
             return timers;
         }
 
-        internal static string InputValidation(string title, string responceMessage, int interval)
+        internal static string InputValidation(string title, string responceMessage, int interval, int messageInterval)
         {
             string message = "";
 
@@ -136,7 +159,14 @@ namespace TwitchBot.MVVM.Model
                 //если интервал > 0
                 if (interval > 0)
                 {
-                    message = "Ok";
+                    if(messageInterval > 0)
+                    {
+                        message = "Ok";
+                    }
+                    else
+                    {
+                        message += "Interval in messages введен не верно!";
+                    }
                 }
                 else
                 {
@@ -180,6 +210,8 @@ namespace TwitchBot.MVVM.Model
                             db.Timers.ToList()[i].Title = timer.Title;
                             db.Timers.ToList()[i].Interval = timer.Interval;
                             db.Timers.ToList()[i].ResponceMessage = timer.ResponceMessage;
+                            db.Timers.ToList()[i].AutoReset = timer.AutoReset;
+                            db.Timers.ToList()[i].MessageInterval = timer.MessageInterval;
 
                             db.SaveChanges();
 
@@ -210,8 +242,30 @@ namespace TwitchBot.MVVM.Model
             return isDelete;
         }
 
+        internal static void ChangeIsEnabledInTimer(int id, bool isEnabled)
+        {
+            try
+            {
+                using (ApplicationContext db = new())
+                {
+                    for (int i = 0; i < db.Timers.ToList().Count; i++)
+                    {
+                        //поиск по Id в бд
+                        if (db.Timers.ToList()[i].Id == id)
+                        {
+                            //сохранение значения
+                            db.Timers.ToList()[i].IsEnabled = isEnabled;
+                            db.SaveChanges();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+
         #endregion
 
+        //получение сообщения о проделанном действии (добавление, удаление, редактирование)
         internal static string GetMessageAboutAction(bool wasTheAction, string msgTrue, string msgFalse)
         {
             string message;
@@ -227,7 +281,7 @@ namespace TwitchBot.MVVM.Model
             }
 
             return message;
-        }
+        }        
         private static string Validate(string property, string nameProperty)
         {
             string message = "";

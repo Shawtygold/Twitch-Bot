@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:bi="https://github.com/helluvamatt/BootstrapIcons.Wpf/"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TwitchBot.MVVM.View"
@@ -102,8 +103,18 @@
                                 <ui:ToggleSwitch Grid.Column="1"
                                                  HorizontalAlignment="Right"
                                                  Margin="0,0,10,0"
-                                                 IsChecked="{Binding IsActive}"                                                
-                                                 VerticalAlignment="Center"/>
+                                                 IsChecked="{Binding IsEnabled}"                                                
+                                                 VerticalAlignment="Center">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Checked">
+                                            <i:InvokeCommandAction Command="{Binding CheckedCommand}" />
+                                        </i:EventTrigger>
+
+                                        <i:EventTrigger EventName="Unchecked">
+                                            <i:InvokeCommandAction Command="{Binding UncheckedCommand}"/>
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </ui:ToggleSwitch>
 
                             </Grid>
                         </Border>

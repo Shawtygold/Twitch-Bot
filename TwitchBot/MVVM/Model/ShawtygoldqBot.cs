@@ -1,24 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Models;
+using TwitchLib.Communication.Interfaces;
 
 namespace TwitchBot.MVVM.Model
 {
     class ShawtygoldqBot
-    {      
+    {
         //Twitch client
         private TwitchClient client;
-
-        //таймер
-        private static System.Timers.Timer timer;
-
-        //количество сообщений за период от последнего срабатывания таймера
-        private int countMessagePeriod = 0;
 
         #region BotSettings
 
@@ -33,46 +29,53 @@ namespace TwitchBot.MVVM.Model
         internal string BotStatus { get; set; } = "Off";
         private Dictionary<string, string> Variables { get; set; }
         private List<Command> Commands { get; set; }
-        private List<string> UserNames { get; set; } = new();
+        private List<Timer> Timers { get; set; } = new();
+        private List<string> UserNames { get; set; } = new();     
         private List<string> BadWords { get; set; } = new() { "гомик", "гомосек", "негр", "негритянка", "негрунчик", "негрилла", "кацап", "москаль", "русня", "хохол", "укроп", "жид", "хач", "даун", "педик", "педераст", "пидорас", "пидор", "пидарас", "гей", "шлюха", "блядота", "мать ебал", "иди нахуй" };
-        private List<string> Messages { get; set; } = new();
+        private ObservableCollection<string> Messages { get; set; } = new();
+
+        //имена модераторов или ботов хз как их назвать, которые автоматом подключаются к чату на Twitch
+        private List<string> TwitchBotNames { get; set; } = new() { $"shawtygoldqbot", "drapsnatt", "aliceydra", "commanderroot", "anotherttvviewer", "01olivia", "01ella", "streamelements", "maria_anderson_", "lurxx" };
 
         #endregion
 
         public ShawtygoldqBot()
         {
-            try
-            {
-                ConnectionCredentials credentials = new (botName, oAuth);
-
-                client = new TwitchClient();
-                client.Initialize(credentials, channel);
-
-                client.OnConnected += Client_OnConnected;
-                client.OnJoinedChannel += Client_OnJoinedChannel;
-                client.OnMessageReceived += Client_OnMessageReceived;
-                client.OnChatCommandReceived += Client_OnChatCommandReceived;
-                client.OnUserJoined += Client_OnUserJoined;
-                client.OnUserLeft += Client_OnUserLeft;
-                client.OnModeratorJoined += Client_OnModeratorJoined;
-                client.OnDisconnected += Client_OnDisconnected;
-
-                //получение списка команд из бд
-                Commands = new(DataWorker.GetCommands());
-
-                //установка таймера
-                SetTimer();
-            }
-            catch (Exception ex) { MessageBox.Show(ex.Message); }          
+            Messages.CollectionChanged += Messages_CollectionChanged;
         }
 
         #region Events 
+        private void Messages_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            //добавление всем таймерам значения переменной, отвечающей за количество отправленых сообщений за период
+            for (int i = 0; i < Timers.Count; i++)
+            {
+                if (Timers[i].IsEnabled == true)
+                {
+                    Timers[i].countMessssagePeriod++;
+                }
+            }
+        }
 
         private void Client_OnConnected(object? sender, OnConnectedArgs e)
         {
             try
             {
-                client.SendMessage(channel, "Присоединился");                
+                //получение списка команд из бд
+                Commands = new(DataWorker.GetCommands());
+
+                //получение списка таймеров из бд
+                Timers = new(DataWorker.GetTimers());
+
+                //запуск всех таймеров
+                for (int i = 0; i < Timers.Count; i++)
+                {
+                    //если таймеры включены+
+                    if (Timers[i].IsEnabled == true)
+                    {
+                        Timers[i].Start(client, channel);
+                    }
+                }
             }
             catch { }
         }
@@ -81,8 +84,11 @@ namespace TwitchBot.MVVM.Model
         {
             try
             {
-                timer.Stop();
-                timer.Dispose();
+                //останавливаю все таймеры
+                for (int i = 0; i < Timers.Count; i++)
+                {
+                    Timers[i].Stop();
+                }
             }
             catch(Exception ex) { MessageBox.Show(ex.Message); }
         }
@@ -91,9 +97,7 @@ namespace TwitchBot.MVVM.Model
         {
             try
             {
-                client.SendMessage(e.Channel, "Приветствую! Не проказничать в чате!");
-                //запуск таймера
-                timer.Start();
+                client.SendMessage(e.Channel, "Здарова стример!");             
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
@@ -102,15 +106,19 @@ namespace TwitchBot.MVVM.Model
         {
             try
             {
-                //добавляю сообщение в список сообщений
-                Messages.Add(e.ChatMessage.Message);
-
-                //проверка на плохие слова
-                for (int i = 0; i < BadWords.Count; i++)
+                //если не начинается с "!"
+                if (e.ChatMessage.Message.StartsWith("!") == false)
                 {
-                    //в таймаут плохих челов
-                    if (e.ChatMessage.Message.ToLower().Contains(BadWords[i]))
-                        client.TimeoutUser(e.ChatMessage.Channel, e.ChatMessage.Username, TimeSpan.FromSeconds(30), "Не ругайся, отдохни минут 30");
+                    //добавляю сообщение в список сообщений
+                    Messages.Add(e.ChatMessage.Message);
+
+                    //проверка на плохие слова
+                    for (int i = 0; i < BadWords.Count; i++)
+                    {
+                        //в таймаут плохих челов
+                        if (e.ChatMessage.Message.ToLower().Contains(BadWords[i]))
+                            client.TimeoutUser(e.ChatMessage.Channel, e.ChatMessage.Username, TimeSpan.FromMinutes(15), "Не ругайся, отдохни минут 15");
+                    }
                 }
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
@@ -137,7 +145,7 @@ namespace TwitchBot.MVVM.Model
                 for (int i  = 0; i < Commands.Count; i++)
                 {
                     //если пользователь ввел в чат существующую команду и она активна
-                    if (e.Command.CommandText.ToLower() == Commands[i].Title.ToLower() && Commands[i].IsActive == true)
+                    if (e.Command.CommandText.ToLower() == Commands[i].Title.ToLower() && Commands[i].IsEnabled == true)
                     {
                         //для начала надо проверить есть ли в команде переменные
                         //прохожусь по словарю с переменными
@@ -210,10 +218,13 @@ namespace TwitchBot.MVVM.Model
         {
             try
             {
-                //добавление имени пользователя при подключении             
+                //добавление имени пользователя при подключении (здесь хранятся все, даже боты)          
                 UserNames.Add(e.Username);
-                //приветствие
-                client.SendMessage(e.Channel, $"Привет, {e.Username}!");
+
+                //если реальный чел
+                if (BotCheck(e.Username) == false)
+                    client.SendMessage(e.Channel, $"Приветствую тебя, {e.Username}!");
+
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
@@ -237,15 +248,6 @@ namespace TwitchBot.MVVM.Model
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
-        private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
-        {
-            //если бот подключен к каналу
-            if (client.JoinedChannels.Count != 0)
-            {
-                client.SendMessage(channel, "Нажимая на кнопку \"Отслеживать\" Вы даёте +1000 к мотивации стримера, а также Вы будете в курсе о всех последующих стримах! Приятного просмотра!");
-            }
-        }
-
         #endregion
 
         #region Methods
@@ -253,7 +255,21 @@ namespace TwitchBot.MVVM.Model
         internal void Connect()
         {
             try
-            {                                
+            {
+                ConnectionCredentials credentials = new(botName, oAuth);
+
+                client = new TwitchClient();
+                client.Initialize(credentials, channel);
+
+                client.OnConnected += Client_OnConnected;
+                client.OnJoinedChannel += Client_OnJoinedChannel;
+                client.OnMessageReceived += Client_OnMessageReceived;
+                client.OnChatCommandReceived += Client_OnChatCommandReceived;
+                client.OnUserJoined += Client_OnUserJoined;
+                client.OnUserLeft += Client_OnUserLeft;
+                client.OnModeratorJoined += Client_OnModeratorJoined;
+                client.OnDisconnected += Client_OnDisconnected;
+
                 //подключаем бота
                 client.Connect();
 
@@ -283,13 +299,19 @@ namespace TwitchBot.MVVM.Model
             return number;
         }
 
-        private void SetTimer()
+        private bool BotCheck(string uername)
         {
-            //таймер на 15 мин
-            timer = new System.Timers.Timer(900000);
-            timer.Elapsed += Timer_Elapsed;
-            timer.AutoReset = true;
-            timer.Enabled = true;
+            bool bot = false;
+
+            for(int i  = 0; i < TwitchBotNames.Count; i++)
+            {
+                if(uername == TwitchBotNames[i])
+                {
+                    bot = true; 
+                }
+            }
+
+            return bot;
         }
 
         #endregion

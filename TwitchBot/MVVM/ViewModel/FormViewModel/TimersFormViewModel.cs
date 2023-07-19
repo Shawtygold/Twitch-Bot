@@ -35,15 +35,21 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
                 Title = timer.Title;
                 Interval = timer.Interval;
                 ResponceMessage = timer.ResponceMessage;
-                IsActive = timer.IsActive;
+                IsEnabled = timer.IsEnabled;
+                AutoReset = timer.AutoReset;
+                MessageInterval = timer.MessageInterval;
             }
         }
 
         #region Properties
 
-        public int Id { get; set; }
-        public bool IsActive { get; set; }
         public string AppTitle { get; set; } = "TwitchBot";
+        public string Action { get; set; } = "";
+
+
+        public int Id { get; set; }
+        public bool IsEnabled { get; set; }
+        public bool AutoReset { get; set; } = false;
 
 
         private string _title = "";
@@ -58,7 +64,15 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
         public int Interval
         {
             get { return _interval; }
-            set {  _interval = value;  OnPropertyChanged(); }
+            set { _interval = value; OnPropertyChanged(); }
+        }
+
+
+        private int _messageInterval = 0;
+        public int MessageInterval
+        {
+            get { return _messageInterval; }
+            set { _messageInterval = value; OnPropertyChanged(); }
         }
 
 
@@ -67,14 +81,6 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
         {
             get { return _responceMessage; }
             set { _responceMessage = value; OnPropertyChanged(); }
-        }
-
-
-        private string _action = "";
-        public string Action
-        {
-            get { return _action; }
-            set { _action = value; }
         }
 
         #endregion
@@ -104,7 +110,7 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
             if (obj is Window form)
             {
                 //получение сообщения о правильности ввода данных
-                string message = DataWorker.InputValidation(Title, ResponceMessage, Interval);
+                string message = DataWorker.InputValidation(Title, ResponceMessage, Interval, MessageInterval);
 
                 if (message == "Ok")
                 {
@@ -116,7 +122,9 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
                             Title = Title,
                             ResponceMessage = ResponceMessage,
                             Interval = Interval,
-                            IsActive = true
+                            IsEnabled = true,
+                            AutoReset = AutoReset,
+                            MessageInterval = MessageInterval
 
                         }), msgTrue: "Таймер успешно добавлен!", msgFalse: "Произошла ошибка. Таймер не добавлен!"));
                     }
@@ -129,7 +137,9 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
                             Title = Title,
                             ResponceMessage = ResponceMessage,
                             Interval = Interval,
-                            IsActive = IsActive
+                            IsEnabled = IsEnabled,
+                            AutoReset = AutoReset,
+                            MessageInterval = MessageInterval
 
                         }), msgTrue: "Таймер успешно отредактирован!", msgFalse: "Произошла ошибка. Таймер не был отредактирован!"));
                     }

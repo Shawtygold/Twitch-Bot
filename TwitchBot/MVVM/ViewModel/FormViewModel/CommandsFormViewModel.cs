@@ -37,15 +37,18 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
                 Id = command.Id;
                 Title = command.Title;
                 ResponceType = command.ResponceType;
-                IsActive = command.IsActive;
+                IsEnabled = command.IsEnabled;
             }       
         }
 
         #region Properties
 
-        public int Id { get; set; }
-        public bool IsActive { get; set; }
         public string AppTitle { get; set; } = "TwitchBot";
+        public string Action { get; set; } = "";
+
+
+        public int Id { get; set; }
+        public bool IsEnabled { get; set; }
 
 
         private string _title = "";
@@ -61,14 +64,6 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
         {
             get { return _responceType; }
             set { _responceType = value; OnPropertyChanged(); }
-        }
-
-
-        private string _action = "";
-        public string Action
-        {
-            get { return _action; }
-            set { _action = value; }
         }
 
         #endregion
@@ -109,7 +104,7 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
                         {
                             Title = Title,
                             ResponceType = ResponceType,
-                            IsActive = true
+                            IsEnabled = true
 
                         }), msgTrue: "Команда успешно добавлена!", msgFalse:"Произошла ошибка. Команда не добавлена!"));
                     }
@@ -121,7 +116,7 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
                             Id = Id,
                             Title = Title,
                             ResponceType = ResponceType,
-                            IsActive = IsActive
+                            IsEnabled = IsEnabled
 
                         }), msgTrue: "Команда успешно отредактирована!", msgFalse: "Произошла ошибка. Команда не была отредактирована!"));
                     }
