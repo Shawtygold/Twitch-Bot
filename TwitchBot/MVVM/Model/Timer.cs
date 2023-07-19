@@ -1,12 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic;
-using System.Threading.Channels;
-using System.Windows.Documents;
+using System.Threading;
 using System.Windows.Input;
 using TwitchBot.Core;
 using TwitchLib.Client;
-using System.Collections.ObjectModel;
-using System.Threading;
 
 namespace TwitchBot.MVVM.Model
 {
