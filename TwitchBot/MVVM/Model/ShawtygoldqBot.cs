@@ -7,7 +7,6 @@ using TwitchLib.Client;
 using TwitchLib.Client.Events;
 using TwitchLib.Client.Extensions;
 using TwitchLib.Client.Models;
-using TwitchLib.Communication.Interfaces;
 
 namespace TwitchBot.MVVM.Model
 {
@@ -35,7 +34,7 @@ namespace TwitchBot.MVVM.Model
         private ObservableCollection<string> Messages { get; set; } = new();
 
         //имена модераторов или ботов хз как их назвать, которые автоматом подключаются к чату на Twitch
-        private List<string> TwitchBotNames { get; set; } = new() { $"shawtygoldqbot", "drapsnatt", "aliceydra", "commanderroot", "anotherttvviewer", "01olivia", "01ella", "streamelements", "maria_anderson_", "lurxx" };
+        private List<string> TwitchBotNames { get; set; } = new() { $"shawtygoldqbot", "shawtygoldq", "wannabemygamerfriend", "0ax2", "kattah", "drapsnatt", "aliceydra", "commanderroot", "anotherttvviewer", "01olivia", "01ella", "streamelements", "maria_anderson_", "lurxx" };
 
         #endregion
 
@@ -141,32 +140,32 @@ namespace TwitchBot.MVVM.Model
                     ["{channel}"] = e.Command.ChatMessage.Channel
                 };
 
-                //прохожусь по командам
                 for (int i  = 0; i < Commands.Count; i++)
                 {
-                    //если пользователь ввел в чат существующую команду и она активна
                     if (e.Command.CommandText.ToLower() == Commands[i].Title.ToLower() && Commands[i].IsEnabled == true)
                     {
+                        //использую эту переменную для того чтобы вместо оригинального текста команды заменять переменные здесь. (чтобы оригинальнй reponceType не был изменен)
+                        string responceType = Commands[i].ResponceType;
+
                         //для начала надо проверить есть ли в команде переменные
                         //прохожусь по словарю с переменными
                         foreach (var variable in Variables)
                         {
                             //если команда содержит какую либо переменную(ключ) в словаре
-                            if (Commands[i].ResponceType.Contains(variable.Key))
+                            if (responceType.Contains(variable.Key))
                             {
                                 //заменяю в responceType переменную(ключ) на метод(значение)
-                                Commands[i].ResponceType = Commands[i].ResponceType.Replace(variable.Key, variable.Value);
+                                responceType = responceType.Replace(variable.Key, variable.Value);
                             }
                             //если команда содержит переменную random 
-                            else if (Commands[i].ResponceType.Contains("{random")) //например: (random(5, 10)))
+                            else if (responceType.Contains("{random")) //например: {random(5, 10)}
                             {
                                 //разделение текста команды на слова
-                                List<string> words = Commands[i].ResponceType.Split(" ").ToList();
+                                List<string> words = responceType.Split(" ").ToList();
                                 //здесь будут храниться все переменные random (пользователь может ввести несколько таких переменных в одну команду)
                                 List<string> variables = new();
                                 //индексы
                                 List<int> indexes = new();
-
 
                                 for (int j = 0; j < words.Count; j++)
                                 {
@@ -202,12 +201,12 @@ namespace TwitchBot.MVVM.Model
                                 }
 
                                 //объединение
-                                Commands[i].ResponceType = string.Join(" ", words);                                                                                           
+                                responceType = string.Join(" ", words);                                                                                           
                             }
                         }
 
                         //отправка сообщение в чат
-                        client.SendMessage(e.Command.ChatMessage.Channel, Commands[i].ResponceType);
+                        client.SendMessage(e.Command.ChatMessage.Channel, responceType);
                     } 
                 }
             }
@@ -218,12 +217,12 @@ namespace TwitchBot.MVVM.Model
         {
             try
             {
-                //добавление имени пользователя при подключении (здесь хранятся все, даже боты)          
+                //добавление имени пользователя при подключении
                 UserNames.Add(e.Username);
 
                 //если реальный чел
                 if (BotCheck(e.Username) == false)
-                    client.SendMessage(e.Channel, $"Приветствую тебя, {e.Username}!");
+                    client.SendMessage(e.Channel, $"Привет, {e.Username}!");
 
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
@@ -269,6 +268,7 @@ namespace TwitchBot.MVVM.Model
                 client.OnUserLeft += Client_OnUserLeft;
                 client.OnModeratorJoined += Client_OnModeratorJoined;
                 client.OnDisconnected += Client_OnDisconnected;
+                client.OnNewSubscriber += Client_OnNewSubscriber;
 
                 //подключаем бота
                 client.Connect();
@@ -276,6 +276,16 @@ namespace TwitchBot.MVVM.Model
                 BotStatus = "On";
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
+
+        private void Client_OnNewSubscriber(object? sender, OnNewSubscriberArgs e)
+        {
+            try
+            {
+                //отправка сообщения при новом подписчике
+                client.SendMessage(e.Channel, "Спасибо за подписку, " + e.Subscriber.DisplayName);
+            }
+            catch { }
         }
 
         internal void Disconnect()
@@ -290,7 +300,6 @@ namespace TwitchBot.MVVM.Model
             catch(Exception ex) { MessageBox.Show(ex.Message); }
         }
 
-        //получение рандомного индекса
         private static int GetRandomNumber(int from, int to)
         {
             Random rnd = new();
