@@ -21,7 +21,6 @@ namespace TwitchBot.MVVM.ViewModel
             EditCommand = new RelayCommand(Edit);
             DeleteCommand = new RelayCommand(Delete);
 
-            //загрузка команд из StaticCommands в Commands
             LoadCommand();
         }
 

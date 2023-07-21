@@ -24,7 +24,7 @@ namespace TwitchBot.MVVM.ViewModel
             NaviagteToTimersCommand = new RelayCommand(NavigateToTimers);
         }
 
-        //инициализирую бота
+        //бот
         ShawtygoldqBot bot = new();
 
         #region Properties

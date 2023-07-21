@@ -19,7 +19,7 @@ namespace TwitchBot.MVVM.Model
         #region BotSettings
 
         private readonly string channel = "shawtygoldq";
-        private readonly string oAuth = "bvdwgq2k2sqte0ctvpzwbjpgj0f5y6";
+        private readonly string oAuth = "6kv5eba4p5chcopo6dfs9jrjucq2wu";
         private readonly string botName = "shawtygoldqbot";
 
         #endregion
@@ -137,7 +137,6 @@ namespace TwitchBot.MVVM.Model
                 //словарь с переменными
                 Variables = new Dictionary<string, string>()
                 {
-                    ["{random_chatter}"] = UserNames[GetRandomNumber(0, UserNames.Count - 1)],
                     ["{user}"] = e.Command.ChatMessage.Username,
                     ["{channel}"] = e.Command.ChatMessage.Channel
                 };
@@ -158,53 +157,81 @@ namespace TwitchBot.MVVM.Model
                             {
                                 //заменяю в responceType переменную(ключ) на метод(значение)
                                 responceType = responceType.Replace(variable.Key, variable.Value);
-                            }
-                            //если команда содержит переменную random 
-                            else if (responceType.Contains("{random")) //например: {random(5, 10)}
+                            }                          
+                        }
+                        //если команда содержит переменную random 
+                        if (responceType.Contains("{random(")) //например: {random(5, 10)}
+                        {
+                            //разделение текста команды на слова
+                            List<string> words = responceType.Split(" ").ToList();
+                            //здесь будут храниться все переменные random (пользователь может ввести несколько таких переменных в одну команду)
+                            List<string> variables = new();
+                            //индексы
+                            List<int> indexes = new();
+
+                            for (int j = 0; j < words.Count; j++)
                             {
-                                //разделение текста команды на слова
-                                List<string> words = responceType.Split(" ").ToList();
-                                //здесь будут храниться все переменные random (пользователь может ввести несколько таких переменных в одну команду)
-                                List<string> variables = new();
-                                //индексы
-                                List<int> indexes = new();
-
-                                for (int j = 0; j < words.Count; j++)
+                                if (words[j].Contains("{random("))
                                 {
-                                    if (words[j].Contains("{random"))
-                                    {
-                                        //добавление переменной в список переменных
-                                        variables.Add(words[j]);
-                                        //добавление индекса переменной в список индексов
-                                        indexes.Add(j);
-                                    }
+                                    //добавление переменной в список переменных
+                                    variables.Add(words[j]);
+                                    //добавление индекса переменной в список индексов
+                                    indexes.Add(j);
                                 }
-
-                                for (int k = 0; k < variables.Count; k++)
-                                {
-                                    //получаю индексы символов для нахождения чисел, которые переданы в скобках 
-                                    int index = variables[k].IndexOf('(');
-                                    int index2 = variables[k].IndexOf(',');
-                                    int index3 = variables[k].IndexOf(')');
-
-                                    //получение первого числа
-                                    int number1 = Convert.ToInt32(variables[k].Substring(index + 1, index2 - index - 1));
-                                    //получение второго числа
-                                    int number2 = Convert.ToInt32(variables[k].Substring(index2 + 1, index3 - index2 - 1));
-
-                                    //рандомное число от первого числа до второго числа
-                                    int rndNumber = GetRandomNumber(Convert.ToInt32(number1), Convert.ToInt32(number2));
-
-                                    //замена переменной на значение
-                                    variables[k] = $"{rndNumber}";
-
-                                    //вставка значения по индексу
-                                    words[indexes[k]] = variables[k];
-                                }
-
-                                //объединение
-                                responceType = string.Join(" ", words);                                                                                           
                             }
+
+                            for (int k = 0; k < variables.Count; k++)
+                            {
+                                //получаю индексы символов для нахождения чисел, которые переданы в скобках 
+                                int index = variables[k].IndexOf('(');
+                                int index2 = variables[k].IndexOf(',');
+                                int index3 = variables[k].IndexOf(')');
+
+                                //получение первого числа
+                                int number1 = Convert.ToInt32(variables[k].Substring(index + 1, index2 - index - 1));
+                                //получение второго числа
+                                int number2 = Convert.ToInt32(variables[k].Substring(index2 + 1, index3 - index2 - 1));
+
+                                //рандомное число от первого числа до второго числа
+                                int rndNumber = GetRandomNumber(Convert.ToInt32(number1), Convert.ToInt32(number2));
+
+                                //замена переменной на значение
+                                variables[k] = $"{rndNumber}";
+
+                                //вставка значения по индексу
+                                words[indexes[k]] = variables[k];
+                            }
+
+                            //объединение
+                            responceType = string.Join(" ", words);
+                        }
+                        //если команда содержит переменную {random_chatter} 
+                        if (responceType.Contains("{random_chatter}"))
+                        {
+                            List<string> words = responceType.Split(" ").ToList();
+                            List<string> variables = new();
+                            List<int> indexes = new();
+
+                            for(int j = 0; j < words.Count; j++)
+                            {
+                                if (words[j] == "{random_chatter}")
+                                {
+                                    variables.Add(words[j]);
+                                    indexes.Add(j);
+                                }
+                            }
+
+                            for(int j = 0; j < variables.Count; j++)
+                            {
+                                //заменяю переменную на рандомное имя
+                                variables[j] = UserNames[GetRandomNumber(0, UserNames.Count)];
+
+                                //заменяю в списке слов переменную на имя
+                                words[indexes[j]] = variables[j];
+                            }
+
+                            //объединение
+                            responceType = string.Join(" ", words);
                         }
 
                         //отправка сообщение в чат
