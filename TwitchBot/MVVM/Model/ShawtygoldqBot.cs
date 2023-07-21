@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -35,6 +36,7 @@ namespace TwitchBot.MVVM.Model
 
         //имена модераторов или ботов хз как их назвать, которые автоматом подключаются к чату на Twitch
         private List<string> TwitchBotNames { get; set; } = new() { $"shawtygoldqbot", "shawtygoldq", "wannabemygamerfriend", "0ax2", "kattah", "drapsnatt", "aliceydra", "commanderroot", "anotherttvviewer", "01olivia", "01ella", "streamelements", "maria_anderson_", "lurxx" };
+        private List<string> HelloNames { get; set; } = new();
 
         #endregion
 
@@ -220,23 +222,27 @@ namespace TwitchBot.MVVM.Model
                 //добавление имени пользователя при подключении
                 UserNames.Add(e.Username);
 
-                //если реальный чел
                 if (BotCheck(e.Username) == false)
-                    client.SendMessage(e.Channel, $"Привет, {e.Username}!");
-
+                {
+                    if (HelloCheck(e.Username) == false)
+                    {
+                        client.SendMessage(e.Channel, $"Привет, {e.Username}!");
+                        HelloNames.Add(e.Username);
+                    }
+                }                  
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
-        private void Client_OnUserLeft(object? sender, OnUserLeftArgs e)
-        {
-            try
-            {
-                //удаление имени пользователя при отключении
-                UserNames.Remove(e.Username);
-            }
-            catch (Exception ex) { MessageBox.Show(ex.Message); }
-        }
+        //private void Client_OnUserLeft(object? sender, OnUserLeftArgs e)
+        //{
+        //    try
+        //    {
+        //        //удаление имени пользователя при отключении
+        //        UserNames.Remove(e.Username);
+        //    }
+        //    catch (Exception ex) { MessageBox.Show(ex.Message); }
+        //}
 
         private void Client_OnModeratorJoined(object? sender, OnModeratorJoinedArgs e)
         {
@@ -265,7 +271,7 @@ namespace TwitchBot.MVVM.Model
                 client.OnMessageReceived += Client_OnMessageReceived;
                 client.OnChatCommandReceived += Client_OnChatCommandReceived;
                 client.OnUserJoined += Client_OnUserJoined;
-                client.OnUserLeft += Client_OnUserLeft;
+                //client.OnUserLeft += Client_OnUserLeft;
                 client.OnModeratorJoined += Client_OnModeratorJoined;
                 client.OnDisconnected += Client_OnDisconnected;
                 client.OnNewSubscriber += Client_OnNewSubscriber;
@@ -314,6 +320,7 @@ namespace TwitchBot.MVVM.Model
 
             for(int i  = 0; i < TwitchBotNames.Count; i++)
             {
+                //если имя совпадает с именем бота
                 if(uername == TwitchBotNames[i])
                 {
                     bot = true; 
@@ -321,6 +328,23 @@ namespace TwitchBot.MVVM.Model
             }
 
             return bot;
+        }
+
+        //метод проверяющий приветствовал ли бот пользователя в чате
+        private bool HelloCheck(string username)
+        {
+            bool result = false;
+
+            for(int i = 0; i < HelloNames.Count; i++)
+            {
+                //если пользователя приветствовали
+                if(username == HelloNames[i])
+                {
+                    result = true;
+                }
+            }
+
+            return result;
         }
 
         #endregion
