@@ -19,7 +19,7 @@ namespace TwitchBot.MVVM.Model
         #region BotSettings
 
         private readonly string channel = "shawtygoldq";
-        private readonly string oAuth = "6kv5eba4p5chcopo6dfs9jrjucq2wu";
+        private readonly string oAuth = "bvdwgq2k2sqte0ctvpzwbjpgj0f5y6";
         private readonly string botName = "shawtygoldqbot";
 
         #endregion
@@ -46,6 +46,7 @@ namespace TwitchBot.MVVM.Model
         }
 
         #region Events 
+
         private void Messages_CollectionChanged(object? sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             //добавление всем таймерам значения переменной, отвечающей за количество отправленых сообщений за период
@@ -131,10 +132,8 @@ namespace TwitchBot.MVVM.Model
         {
             try
             {
-                //добавляю сообщение в список сообщений
                 Messages.Add(e.Command.ChatMessage.Message);
 
-                //словарь с переменными
                 Variables = new Dictionary<string, string>()
                 {
                     ["{user}"] = e.Command.ChatMessage.Username,
@@ -145,28 +144,28 @@ namespace TwitchBot.MVVM.Model
                 {
                     if (e.Command.CommandText.ToLower() == Commands[i].Title.ToLower() && Commands[i].IsEnabled == true)
                     {
-                        //использую эту переменную для того чтобы вместо оригинального текста команды заменять переменные здесь. (чтобы оригинальнй reponceType не был изменен)
+                        //использую эту переменную для того чтобы вместо оригинального текста команды заменять переменные в этой переменной. (чтобы оригинальнй reponceType не был изменен).
                         string responceType = Commands[i].ResponceType;
 
                         //для начала надо проверить есть ли в команде переменные
-                        //прохожусь по словарю с переменными
+
                         foreach (var variable in Variables)
                         {
                             //если команда содержит какую либо переменную(ключ) в словаре
                             if (responceType.Contains(variable.Key))
                             {
-                                //заменяю в responceType переменную(ключ) на метод(значение)
+                                //замена в responceType переменной(ключа) на метод(значение)
                                 responceType = responceType.Replace(variable.Key, variable.Value);
                             }                          
                         }
+
                         //если команда содержит переменную random 
                         if (responceType.Contains("{random(")) //например: {random(5, 10)}
                         {
-                            //разделение текста команды на слова
                             List<string> words = responceType.Split(" ").ToList();
                             //здесь будут храниться все переменные random (пользователь может ввести несколько таких переменных в одну команду)
                             List<string> variables = new();
-                            //индексы
+                            //индексы этих переменных random
                             List<int> indexes = new();
 
                             for (int j = 0; j < words.Count; j++)
@@ -205,6 +204,7 @@ namespace TwitchBot.MVVM.Model
                             //объединение
                             responceType = string.Join(" ", words);
                         }
+
                         //если команда содержит переменную {random_chatter} 
                         if (responceType.Contains("{random_chatter}"))
                         {
@@ -223,10 +223,10 @@ namespace TwitchBot.MVVM.Model
 
                             for(int j = 0; j < variables.Count; j++)
                             {
-                                //заменяю переменную на рандомное имя
+                                //замена переменной на рандомное имя
                                 variables[j] = UserNames[GetRandomNumber(0, UserNames.Count)];
 
-                                //заменяю в списке слов переменную на имя
+                                //вставка значения по индексу
                                 words[indexes[j]] = variables[j];
                             }
 
@@ -261,15 +261,15 @@ namespace TwitchBot.MVVM.Model
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
-        //private void Client_OnUserLeft(object? sender, OnUserLeftArgs e)
-        //{
-        //    try
-        //    {
-        //        //удаление имени пользователя при отключении
-        //        UserNames.Remove(e.Username);
-        //    }
-        //    catch (Exception ex) { MessageBox.Show(ex.Message); }
-        //}
+        private void Client_OnUserLeft(object? sender, OnUserLeftArgs e)
+        {
+            try
+            {
+                //удаление имени пользователя при отключении
+                UserNames.Remove(e.Username);
+            }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
+        }
 
         private void Client_OnModeratorJoined(object? sender, OnModeratorJoinedArgs e)
         {
@@ -298,7 +298,7 @@ namespace TwitchBot.MVVM.Model
                 client.OnMessageReceived += Client_OnMessageReceived;
                 client.OnChatCommandReceived += Client_OnChatCommandReceived;
                 client.OnUserJoined += Client_OnUserJoined;
-                //client.OnUserLeft += Client_OnUserLeft;
+                client.OnUserLeft += Client_OnUserLeft;
                 client.OnModeratorJoined += Client_OnModeratorJoined;
                 client.OnDisconnected += Client_OnDisconnected;
                 client.OnNewSubscriber += Client_OnNewSubscriber;
