@@ -1,7 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Windows;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Windows.Input;
 using TwitchBot.Core;
 

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using TwitchLib.Client;
 using TwitchLib.Client.Events;
@@ -13,13 +13,12 @@ namespace TwitchBot.MVVM.Model
 {
     class ShawtygoldqBot
     {
-        //Twitch client
         private TwitchClient client;
 
         #region BotSettings
-
+        
         private readonly string channel = "shawtygoldq";
-        private readonly string oAuth = "bvdwgq2k2sqte0ctvpzwbjpgj0f5y6";
+        private readonly string oAuth = new StreamReader(@"E:\TwitchBotOAuth\OAuth.txt").ReadLine();
         private readonly string botName = "shawtygoldqbot";
 
         #endregion
@@ -132,6 +131,7 @@ namespace TwitchBot.MVVM.Model
         {
             try
             {
+                //добавление сообщения в список сообщений
                 Messages.Add(e.Command.ChatMessage.Message);
 
                 Variables = new Dictionary<string, string>()
@@ -280,6 +280,16 @@ namespace TwitchBot.MVVM.Model
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
+        private void Client_OnNewSubscriber(object? sender, OnNewSubscriberArgs e)
+        {
+            try
+            {
+                //отправка сообщения при новом подписчике
+                client.SendMessage(e.Channel, "Спасибо за подписку, " + e.Subscriber.DisplayName);
+            }
+            catch { }
+        }
+
         #endregion
 
         #region Methods
@@ -311,16 +321,6 @@ namespace TwitchBot.MVVM.Model
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
-        private void Client_OnNewSubscriber(object? sender, OnNewSubscriberArgs e)
-        {
-            try
-            {
-                //отправка сообщения при новом подписчике
-                client.SendMessage(e.Channel, "Спасибо за подписку, " + e.Subscriber.DisplayName);
-            }
-            catch { }
-        }
-
         internal void Disconnect()
         {
             try
@@ -341,14 +341,15 @@ namespace TwitchBot.MVVM.Model
             return number;
         }
 
-        private bool BotCheck(string uername)
+        //метод проверяющий является ли участник чата ботом
+        private bool BotCheck(string username)
         {
             bool bot = false;
 
             for(int i  = 0; i < TwitchBotNames.Count; i++)
             {
                 //если имя совпадает с именем бота
-                if(uername == TwitchBotNames[i])
+                if(username == TwitchBotNames[i])
                 {
                     bot = true; 
                 }
@@ -364,7 +365,7 @@ namespace TwitchBot.MVVM.Model
 
             for(int i = 0; i < HelloNames.Count; i++)
             {
-                //если пользователя приветствовали
+                //если пользователя уже приветствовали
                 if(username == HelloNames[i])
                 {
                     result = true;

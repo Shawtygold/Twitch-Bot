@@ -8,7 +8,7 @@
         xmlns:local="clr-namespace:TwitchBot.MVVM.View.FormView"
         mc:Ignorable="d"
         Title="TimersForm"
-        Height="425"
+        Height="440"
         Width="350"
         Name="Form"
         ResizeMode="NoResize"
@@ -16,6 +16,7 @@
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         Background="Transparent">
+    
     <Window.Resources>
 
         <SolidColorBrush Color="#2B2B2B" x:Key="TbBackgroundColor"/>
@@ -253,8 +254,8 @@
                     
                     <!--Interval-->
                     <TextBox x:Name="tbInterval" Text="{Binding Interval}"
-                             Tag="Interval (number)"
-                             Width="150"
+                             Tag="Interval (millisecond)"
+                             Width="160"
                              Style="{DynamicResource TextBoxStyle}"/>
 
                     <!--AutoReset-->

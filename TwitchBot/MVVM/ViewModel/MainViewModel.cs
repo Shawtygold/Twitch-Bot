@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
-using System.Xml.Serialization;
 using TwitchBot.Core;
-using TwitchBot.MVVM.Model;
 using TwitchBot.Services;
 
 namespace TwitchBot.MVVM.ViewModel

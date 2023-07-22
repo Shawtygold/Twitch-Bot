@@ -191,7 +191,7 @@
             </Setter>
         </Style>
 
-        <!--StatisticsButton-->
+        <!--StatisticsButton--><!--
         <Style TargetType="Button" x:Key="StatisticsButton">
             <Setter Property="Template">
                 <Setter.Value>
@@ -244,7 +244,7 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-        </Style>
+        </Style>-->
 
     </UserControl.Resources>
     
@@ -268,9 +268,7 @@
             <Button Style="{DynamicResource TimersButton}"
                     Margin="0,0,10,0"
                     Command="{Binding NaviagteToTimersCommand}"/>
-            
-            <Button Style="{DynamicResource StatisticsButton}"/>
-            
+                    
         </StackPanel>
     </Grid>
 </UserControl>
