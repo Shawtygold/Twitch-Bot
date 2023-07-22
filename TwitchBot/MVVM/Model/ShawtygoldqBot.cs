@@ -249,14 +249,16 @@ namespace TwitchBot.MVVM.Model
                 //добавление имени пользователя при подключении
                 UserNames.Add(e.Username);
 
-                if (BotCheck(e.Username) == false)
-                {
-                    if (HelloCheck(e.Username) == false)
-                    {
-                        client.SendMessage(e.Channel, $"Привет, {e.Username}!");
-                        HelloNames.Add(e.Username);
-                    }
-                }                  
+                //Временно убрал фичу с приветствием пользователей в чате
+
+                //if (BotCheck(e.Username) == false)
+                //{
+                //    if (HelloCheck(e.Username) == false)
+                //    {
+                //        client.SendMessage(e.Channel, $"Привет, {e.Username}!");
+                //        HelloNames.Add(e.Username);
+                //    }
+                //}                  
             }
             catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
