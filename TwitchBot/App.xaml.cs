@@ -30,6 +30,7 @@ namespace TwitchBot
             services.AddSingleton<CommandsViewModel>();
             services.AddSingleton<LoadingScreenViewModel>();
             services.AddSingleton<TimersViewModel>();
+            services.AddSingleton<BanWordsViewModel>();
 
             services.AddSingleton<INavigationService, NavigationService>();
 
