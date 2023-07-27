@@ -77,8 +77,8 @@
 
         <!--DeleteButtonStyle-->
         <Style TargetType="Button" x:Key="DeleteButton">
-            <Setter Property="Width" Value="25"/>
-            <Setter Property="Height" Value="25"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -88,10 +88,10 @@
                                 CornerRadius="4">
 
                             <Border.Background>
-                                <SolidColorBrush Color="#2B2B2B" x:Name="BorderBackground"/>
+                                <SolidColorBrush Color="#282828" x:Name="BorderBackground"/>
                             </Border.Background>
 
-                            <bi:BootstrapIcon Icon="X" Width="7"
+                            <bi:BootstrapIcon Icon="Trash2Fill" Width="17"
                                               Foreground="#FFFFFF"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -102,8 +102,8 @@
                                     <Storyboard>
                                         <ColorAnimation Storyboard.TargetName="BorderBackground"
                                                     Storyboard.TargetProperty="Color"
-                                                    From="#2B2B2B"
-                                                    To="#323232"
+                                                    From="#282828"
+                                                    To="#2F2F2F"
                                                     Duration="0:0:0.1"/>
                                     </Storyboard>
                                 </BeginStoryboard>
@@ -115,8 +115,8 @@
                                     <Storyboard>
                                         <ColorAnimation Storyboard.TargetName="BorderBackground"
                                                     Storyboard.TargetProperty="Color"
-                                                    From="#323232"
-                                                    To="#2B2B2B"
+                                                    From="#2F2F2F"
+                                                    To="#282828"
                                                     Duration="0:0:0.1"/>
                                     </Storyboard>
                                 </BeginStoryboard>
@@ -131,8 +131,8 @@
             </Setter>
         </Style>
 
-        <!--SendButtonStyle-->
-        <Style TargetType="Button" x:Key="SendButton">
+        <!--AddButtonStyle-->
+        <Style TargetType="Button" x:Key="AddButton">
             <Setter Property="Width" Value="40"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="Template">
@@ -147,7 +147,7 @@
                                 <SolidColorBrush Color="#2B2B2B" x:Name="BorderBackground"/>
                             </Border.Background>
                             
-                            <bi:BootstrapIcon Icon="SendFill" Width="15"
+                            <bi:BootstrapIcon Icon="PlusCircleFill" Width="18"
                                               Foreground="#FFFFFF"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -187,15 +187,75 @@
             </Setter>
         </Style>
 
+        <!--BackButton-->
+        <Style TargetType="Button" x:Key="BackButton">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                            CornerRadius="4">
+
+                            <Border.Background>
+                                <SolidColorBrush Color="Transparent" x:Name="BorderBackground"/>
+                            </Border.Background>
+
+                            <bi:BootstrapIcon Icon="ArrowLeft"
+                                          Width="16"
+                                          Foreground="White"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+
+                            <EventTrigger RoutedEvent="Border.MouseEnter"
+                                      SourceName="border">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="BorderBackground"
+                                                    Storyboard.TargetProperty="Color"
+                                                    From="#202020"
+                                                    To="#323232"
+                                                    Duration="0:0:0.1"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <EventTrigger RoutedEvent="Border.MouseLeave"
+                                      SourceName="border">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="BorderBackground"
+                                                    Storyboard.TargetProperty="Color"
+                                                    From="#323232"
+                                                    To="#202020"
+                                                    Duration="0:0:0.1"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!--ListViewItem-->
         <Style TargetType="ListViewItem" x:Key="BanWord">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListViewItem">
                         <Border x:Name="border"
-                                Margin="5,0,5,0"                               
-                                Height="25"
-                                Width="auto"
+                                Margin="0,5,0,0"
+                                Width="410"
+                                Height="40"
                                 CornerRadius="4">
                             <Border.Background>
                                 <SolidColorBrush Color="#282828" x:Name="BorderBackground"/>
@@ -205,23 +265,27 @@
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="auto"/>
                                     <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="auto"/>
                                 </Grid.ColumnDefinitions>
-
-                                <TextBlock Text="{Binding Text}"
-                                           FontSize="10"
+                                
+                                <TextBlock Grid.Column="1"
+                                           Text="{Binding Text}"
+                                           FontSize="15"
                                            VerticalAlignment="Center"
                                            Foreground="White"
                                            FontFamily="SegoeFluentIcon"
-                                           HorizontalAlignment="Center"/>
+                                           HorizontalAlignment="Left"
+                                           Margin="20,0,0,0"/>
 
-                                <Button Style="{DynamicResource DeleteButton}"/>
-
+                                <Button Grid.Column="2"
+                                        Style="{DynamicResource DeleteButton}"
+                                        Command="{Binding DeleteCommand}"/>
                             </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
 
                             <EventTrigger RoutedEvent="Border.MouseEnter"
-                                          SourceName="border">
+                                      SourceName="border">
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ColorAnimation Storyboard.TargetName="BorderBackground"
@@ -259,28 +323,36 @@
     
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <ListView BorderThickness="0"
+        <Button Style="{DynamicResource BackButton}"
+                HorizontalAlignment="Left"
+                Margin="20,0,0,0"/>
+
+        <ListView Grid.Row="1"
+                  BorderThickness="0"
                   Background="Transparent"
                   ItemContainerStyle="{DynamicResource BanWord}"
                   ItemsSource="{Binding BanWords}">
             
         </ListView>
 
-        <StackPanel Grid.Row="1"
+        <StackPanel Grid.Row="2"
                     Orientation="Horizontal"
                     Margin="0,0,0,20">
             
             <TextBox Style="{DynamicResource TextBoxStyle}"
-                     x:Name="tbTitle" Text="{Binding Text}" 
-                     Tag="Title" 
+                     x:Name="tbText" Text="{Binding Text}" 
+                     Tag="Text" 
                      Margin="20,0,0,0"/>
 
-            <Button Style="{DynamicResource SendButton}"
-                    Margin="7,0,0,0"/>
+            <Button Style="{DynamicResource AddButton}"
+                    Margin="7,0,7,0"
+                    HorizontalAlignment="Right"
+                    Command="{Binding AddCommand}"/>
         </StackPanel>
     </Grid>
 </UserControl>

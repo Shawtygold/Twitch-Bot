@@ -6,6 +6,7 @@ namespace TwitchBot.MVVM.Model
     {
         public DbSet<Command> Commands => Set<Command>();
         public DbSet<Timer> Timers => Set<Timer>();
+        public DbSet<BanWord> BanWords => Set<BanWord>();
 
         public ApplicationContext() => Database.EnsureCreated();
 

@@ -104,10 +104,9 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
         {
             if (obj is Window form)
             {
-                //получение сообщения о правильности ввода данных
-                string message = DataWorker.InputValidation(Title, ResponceMessage, Interval, MessageInterval);
+                bool isValid = DataWorker.InputValidation(new int[] { Interval, MessageInterval }, Title, ResponceMessage);
 
-                if (message == "Ok")
+                if (isValid)
                 {
                     if (Action == "Добавление")
                     {
@@ -145,12 +144,8 @@ namespace TwitchBot.MVVM.ViewModel.FormViewModel
                 else
                 {
                     //вывод сообщения о нарушениях ввода данных
-                    MessageBox.Show(message);
+                    MessageBox.Show("Проверьте праивльность заполнения формы! Поля не должны быть пустыми, а также значение полей не должно быть меньше 1.");
                 }
-            }
-            else
-            {
-                MessageBox.Show("Alo!");
             }
         }
 

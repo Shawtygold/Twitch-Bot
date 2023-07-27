@@ -191,6 +191,61 @@
             </Setter>
         </Style>
 
+        <!--BanWordsButton-->
+        <Style TargetType="Button" x:Key="BanWordsButton">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                                Width="40"
+                                Height="40"
+                                CornerRadius="4">
+
+                            <Border.Background>
+                                <SolidColorBrush Color="#272727" x:Name="BorderBackground"/>
+                            </Border.Background>
+
+                            <bi:BootstrapIcon Icon="ChatRightDotsFill"
+                                              Foreground="#BABABA"
+                                              Width="18"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+
+                            <EventTrigger RoutedEvent="Border.MouseEnter"
+                                      SourceName="border">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="BorderBackground"
+                                                    Storyboard.TargetProperty="Color"
+                                                    From="#272727"
+                                                    To="#2C2C2C"
+                                                    Duration="0:0:0.1"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <EventTrigger RoutedEvent="Border.MouseLeave"
+                                      SourceName="border">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="BorderBackground"
+                                                    Storyboard.TargetProperty="Color"
+                                                    From="#2C2C2C"
+                                                    To="#272727"
+                                                    Duration="0:0:0.1"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Cursor" Value="Hand"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!--StatisticsButton--><!--
         <Style TargetType="Button" x:Key="StatisticsButton">
             <Setter Property="Template">
@@ -268,7 +323,11 @@
             <Button Style="{DynamicResource TimersButton}"
                     Margin="0,0,10,0"
                     Command="{Binding NaviagteToTimersCommand}"/>
-                    
+
+            <Button Style="{DynamicResource BanWordsButton}"
+                    Margin="0,0,10,0"
+                    Command="{Binding NavigateToBanWordsCommand}"/>
+
         </StackPanel>
     </Grid>
 </UserControl>

@@ -26,22 +26,6 @@ namespace TwitchBot.MVVM.Model
             return commands;
         }
 
-        internal static string InputValidation(string title, string responceType)
-        {
-            string message = "";
-
-            message += Validate(title, "Title");
-            message += Validate(responceType, "Responce Type");
-
-            //если не было ошибок в заполнении
-            if(message.Length == 0)
-            {
-                message = "Ok";
-            }
-
-            return message;
-        }
-
         internal static bool AddCommand(Command command)
         {
             bool isAdded = false;
@@ -146,37 +130,6 @@ namespace TwitchBot.MVVM.Model
             return timers;
         }
 
-        internal static string InputValidation(string title, string responceMessage, int interval, int messageInterval)
-        {
-            string message = "";
-
-            message += Validate(title, "Title");
-            message += Validate(responceMessage, "Responce Message");
-
-            //если не было ошибок в заполнении
-            if (message.Length == 0)
-            {
-                //если интервал > 0
-                if (interval > 0)
-                {
-                    if(messageInterval > 0)
-                    {
-                        message = "Ok";
-                    }
-                    else
-                    {
-                        message += "Interval in messages введен не верно!";
-                    }
-                }
-                else
-                {
-                    message += "Interval введен не верно!";
-                }
-            }
-
-            return message;
-        }
-
         internal static bool AddTimer(Timer timer)
         {
             bool isAdded = false;
@@ -265,6 +218,100 @@ namespace TwitchBot.MVVM.Model
 
         #endregion
 
+
+        #region Работа с BanWord
+
+        internal static ObservableCollection<BanWord> GetBanWords()
+        {
+            ObservableCollection<BanWord> banWords = new();
+
+            try
+            {
+                using (ApplicationContext db = new())
+                {
+                    //получаю все плохие слова из базы данных
+                    banWords = new (db.BanWords.ToList());
+                }
+            }
+            catch (Exception ex){ MessageBox.Show(ex.Message); }
+
+            return banWords;
+        }
+
+        internal static bool AddBanWord(BanWord banWord)
+        {
+            bool isAdded = false;
+
+            if(banWord != null)
+            {
+                using (ApplicationContext db = new())
+                {
+                    db.BanWords.Add(banWord);
+                    db.SaveChanges();
+
+                    isAdded = true;
+                }
+            }
+
+            return isAdded;
+        }
+
+        internal static bool DeleteBanWord(BanWord banWord)
+        {
+            bool isDeleted = false; 
+
+            if(banWord != null)
+            {
+                using (ApplicationContext db = new())
+                {
+                    db.BanWords.Remove(banWord);
+                    db.SaveChanges();
+
+                    isDeleted = true;
+                }
+            }
+
+            return isDeleted;
+        }
+ 
+        #endregion
+
+        internal static bool InputValidation(params string[] strings)
+        {
+            for(int i = 0; i < strings.Length; i++)
+            {
+                //если строка null или пустая
+                if (string.IsNullOrEmpty(strings[i]))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        internal static bool InputValidation(int[] ints, params string[] strings)
+        {
+            for (int i = 0; i < strings.Length; i++)
+            {
+                //если строка null или пустая
+                if (string.IsNullOrEmpty(strings[i]))
+                {
+                    return  false;
+                }
+            }
+
+            for(int i = 0; i < ints.Length; i++)
+            {
+                if (ints[i] <= 0)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         //получение сообщения о проделанном действии (добавление, удаление, редактирование)
         internal static string GetMessageAboutAction(bool wasTheAction, string msgTrue, string msgFalse)
         {
@@ -282,17 +329,5 @@ namespace TwitchBot.MVVM.Model
 
             return message;
         }        
-        private static string Validate(string property, string nameProperty)
-        {
-            string message = "";
-
-            //если поле пустое
-            if (property.Trim() == "")
-            {
-                message += $"Введите {nameProperty}\n";
-            }
-
-            return message;
-        }
     }
 }

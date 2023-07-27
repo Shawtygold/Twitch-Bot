@@ -15,6 +15,17 @@ namespace TwitchBot.MVVM.ViewModel
             StartBotCommand = new RelayCommand(StartBot);
             NaviagteToCommandsCommand = new RelayCommand(NavigateToCommands);
             NaviagteToTimersCommand = new RelayCommand(NavigateToTimers);
+            NavigateToBanWordsCommand = new RelayCommand(NavigateToBanWords);
+
+            //using (ApplicationContext db = new())
+            //{
+            //    db.BanWords.Add(new BanWord
+            //    {
+            //        Text = "Alo"
+            //    });
+
+            //    db.SaveChanges();
+            //}
         }
 
         //бот
@@ -45,6 +56,7 @@ namespace TwitchBot.MVVM.ViewModel
         public ICommand StartBotCommand { get; set; }
         public ICommand NaviagteToCommandsCommand { get; set; }
         public ICommand NaviagteToTimersCommand { get; set; }
+        public ICommand NavigateToBanWordsCommand { get; set; }
 
         private void StartBot(object obj)
         {            
@@ -79,6 +91,15 @@ namespace TwitchBot.MVVM.ViewModel
             Thread thread = new(GetTimers);
             thread.Start();
         }
+        private void NavigateToBanWords(object obj)
+        {
+            //экран загрузки
+            Navigation.NavigateTo<LoadingScreenViewModel>();
+
+            //получение таймеров из базы данных в фоновом потоке
+            Thread thread = new(GetBanWords);
+            thread.Start();
+        }
 
 
         private void GetCommands()
@@ -94,6 +115,13 @@ namespace TwitchBot.MVVM.ViewModel
             TimersViewModel.StaticTimers = DataWorker.GetTimers();
 
             Navigation.NavigateTo<TimersViewModel>();
+        }
+        private void GetBanWords()
+        {
+            //передаю в StaticbanWords все плохие слова
+            BanWordsViewModel.StaticBanWords = DataWorker.GetBanWords();
+
+            Navigation.NavigateTo<BanWordsViewModel>();
         }
 
         #endregion
