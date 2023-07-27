@@ -218,7 +218,6 @@ namespace TwitchBot.MVVM.Model
 
         #endregion
 
-
         #region Работа с BanWord
 
         internal static ObservableCollection<BanWord> GetBanWords()
@@ -289,7 +288,6 @@ namespace TwitchBot.MVVM.Model
 
             return true;
         }
-
         internal static bool InputValidation(int[] ints, params string[] strings)
         {
             for (int i = 0; i < strings.Length; i++)

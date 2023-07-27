@@ -330,7 +330,8 @@
 
         <Button Style="{DynamicResource BackButton}"
                 HorizontalAlignment="Left"
-                Margin="20,0,0,0"/>
+                Margin="20,0,0,0"
+                Command="{Binding BackCommand}"/>
 
         <ListView Grid.Row="1"
                   BorderThickness="0"

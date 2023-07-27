@@ -30,12 +30,11 @@ namespace TwitchBot.MVVM.Model
         private List<Command> Commands { get; set; }
         private List<Timer> Timers { get; set; } = new();
         private List<string> UserNames { get; set; } = new();     
-        private List<string> BadWords { get; set; } = new() { "гомик", "гомосек", "негр", "негритянка", "негрунчик", "негрилла", "кацап", "москаль", "русня", "хохол", "укроп", "жид", "хач", "даун", "педик", "педераст", "пидорас", "пидор", "пидарас", "гей", "шлюха", "блядота", "мать ебал", "иди нахуй" };
+        private List<BanWord> BanWords { get; set; } = new() /*{ "макака", "гомик", "гомосек", "негр", "негритянка", "негрунчик", "негрилла", "кацап", "москаль", "русня", "хохол", "укроп", "жид", "хач", "даун", "педик", "педераст", "пидорас", "пидор", "пидарас", "гей", "шлюха", "блядота", "мать ебал", "иди нахуй" }*/;
         private ObservableCollection<string> Messages { get; set; } = new();
 
         //имена модераторов или ботов хз как их назвать, которые автоматом подключаются к чату на Twitch
         private List<string> TwitchBotNames { get; set; } = new() { $"shawtygoldqbot", "shawtygoldq", "wannabemygamerfriend", "0ax2", "kattah", "drapsnatt", "aliceydra", "commanderroot", "anotherttvviewer", "01olivia", "01ella", "streamelements", "maria_anderson_", "lurxx" };
-        private List<string> HelloNames { get; set; } = new();
 
         #endregion
 
@@ -68,10 +67,13 @@ namespace TwitchBot.MVVM.Model
                 //получение списка таймеров из бд
                 Timers = new(DataWorker.GetTimers());
 
+                //получение списка плохих слов из бд
+                BanWords = new(DataWorker.GetBanWords());
+
                 //запуск всех таймеров
                 for (int i = 0; i < Timers.Count; i++)
                 {
-                    //если таймеры включены+
+                    //если таймеры включены
                     if (Timers[i].IsEnabled == true)
                     {
                         Timers[i].Start(client, channel);
@@ -114,10 +116,10 @@ namespace TwitchBot.MVVM.Model
                     Messages.Add(e.ChatMessage.Message);
 
                     //проверка на плохие слова
-                    for (int i = 0; i < BadWords.Count; i++)
+                    for (int i = 0; i < BanWords.Count; i++)
                     {
                         //в таймаут плохих челов
-                        if (e.ChatMessage.Message.ToLower().Contains(BadWords[i]))
+                        if (e.ChatMessage.Message.ToLower().Contains(BanWords[i].Text))
                             client.TimeoutUser(e.ChatMessage.Channel, e.ChatMessage.Username, TimeSpan.FromMinutes(15), "Не ругайся, отдохни минут 15");
                     }
                 }
@@ -343,39 +345,39 @@ namespace TwitchBot.MVVM.Model
             return number;
         }
 
-        //метод проверяющий является ли участник чата ботом
-        private bool BotCheck(string username)
-        {
-            bool bot = false;
+        ////метод проверяющий является ли участник чата ботом
+        //private bool BotCheck(string username)
+        //{
+        //    bool bot = false;
 
-            for(int i  = 0; i < TwitchBotNames.Count; i++)
-            {
-                //если имя совпадает с именем бота
-                if(username == TwitchBotNames[i])
-                {
-                    bot = true; 
-                }
-            }
+        //    for(int i  = 0; i < TwitchBotNames.Count; i++)
+        //    {
+        //        //если имя совпадает с именем бота
+        //        if(username == TwitchBotNames[i])
+        //        {
+        //            bot = true; 
+        //        }
+        //    }
 
-            return bot;
-        }
+        //    return bot;
+        //}
 
-        //метод проверяющий приветствовал ли бот пользователя в чате
-        private bool HelloCheck(string username)
-        {
-            bool result = false;
+        ////метод проверяющий приветствовал ли бот пользователя в чате
+        //private bool HelloCheck(string username)
+        //{
+        //    bool result = false;
 
-            for(int i = 0; i < HelloNames.Count; i++)
-            {
-                //если пользователя уже приветствовали
-                if(username == HelloNames[i])
-                {
-                    result = true;
-                }
-            }
+        //    for(int i = 0; i < HelloNames.Count; i++)
+        //    {
+        //        //если пользователя уже приветствовали
+        //        if(username == HelloNames[i])
+        //        {
+        //            result = true;
+        //        }
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
         #endregion
     }
