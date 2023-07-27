@@ -16,16 +16,6 @@ namespace TwitchBot.MVVM.ViewModel
             NaviagteToCommandsCommand = new RelayCommand(NavigateToCommands);
             NaviagteToTimersCommand = new RelayCommand(NavigateToTimers);
             NavigateToBanWordsCommand = new RelayCommand(NavigateToBanWords);
-
-            //using (ApplicationContext db = new())
-            //{
-            //    db.BanWords.Add(new BanWord
-            //    {
-            //        Text = "Alo"
-            //    });
-
-            //    db.SaveChanges();
-            //}
         }
 
         //бот

@@ -112,7 +112,6 @@ namespace TwitchBot.MVVM.ViewModel
         {
             BanWords = StaticBanWords;
         }
-
         private void UpdateBanWords()
         {
             BanWords = DataWorker.GetBanWords();
