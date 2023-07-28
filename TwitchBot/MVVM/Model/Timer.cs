@@ -31,7 +31,6 @@ namespace TwitchBot.MVVM.Model
         public int MessageInterval { get; set; }
 
 
-        //количество сообщений за период от последнего срабатывания таймера
         [NotMapped] internal int countMessssagePeriod = 0;
         [NotMapped] private System.Timers.Timer timer1;
         [NotMapped] private TwitchClient client;
@@ -44,12 +43,12 @@ namespace TwitchBot.MVVM.Model
 
         private void Checked(object obj)
         {
-            //изменяю значение IsActive в базе данных на true
+            //изменяю значение IsEnabled в базе данных на true
             DataWorker.ChangeIsEnabledInTimer(Id, isEnabled: true);
         }
         private void Unchecked(object obj)
         {
-            //изменяю значение IsActive в базе данных на true
+            //изменяю значение IsActive в базе данных на false
             DataWorker.ChangeIsEnabledInTimer(Id, isEnabled: false);
         }
 
@@ -59,8 +58,8 @@ namespace TwitchBot.MVVM.Model
 
         internal void Start(TwitchClient client, string channel)
         {
-            //тустановка таймера на время равное Interval
-            timer1 = new(Interval);
+            //установка таймера на время равное Interval
+            timer1 = new(Interval * 60000);
             timer1.Elapsed += Timer_Elapsed;
             timer1.AutoReset = AutoReset;
             timer1.Enabled = IsEnabled;
@@ -90,7 +89,6 @@ namespace TwitchBot.MVVM.Model
             Thread thread = new(SendMessage);
             thread.Start();                    
         }
-
         private void SendMessage()
         {
             //ждем, пока не наберется нужное количество сообщений в чате.
@@ -99,7 +97,6 @@ namespace TwitchBot.MVVM.Model
                 Thread.Sleep(1000);
             }
 
-            //на всякий случай проверяем
             if(countMessssagePeriod == MessageInterval)
             {
                 //отправка сообщения в чат

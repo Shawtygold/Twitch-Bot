@@ -11,18 +11,15 @@
              d:DesignHeight="450" d:DesignWidth="450">
 
     <UserControl.Resources>
-        
-        <SolidColorBrush Color="#2B2B2B" x:Key="TbBackgroundColor"/>
-        <SolidColorBrush Color="#FFFFFF" x:Key="TbForegroundColor"/>
 
         <!--TextBoxStyle-->
         <Style TargetType="TextBox" x:Key="TextBoxStyle">
-            <Setter Property="Background" Value="{DynamicResource TbBackgroundColor}"/>
+            <Setter Property="Background" Value="#2B2B2B"/>
             <Setter Property="Height" Value="40"/>
             <Setter Property="Width" Value="363"/>
             <Setter Property="BorderBrush" Value="#303030"/>
-            <Setter Property="CaretBrush" Value="{DynamicResource TbForegroundColor}"/>
-            <Setter Property="Foreground" Value="{DynamicResource TbForegroundColor}"/>
+            <Setter Property="CaretBrush" Value="#FFFFFF"/>
+            <Setter Property="Foreground" Value="#FFFFFF"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="FontSize" Value="14"/>
             <Setter Property="Padding" Value="7,0,0,0"/>
@@ -91,7 +88,8 @@
                                 <SolidColorBrush Color="#282828" x:Name="BorderBackground"/>
                             </Border.Background>
 
-                            <bi:BootstrapIcon Icon="Trash2Fill" Width="17"
+                            <bi:BootstrapIcon Icon="Trash2Fill"
+                                              Width="17"
                                               Foreground="#FFFFFF"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -147,7 +145,8 @@
                                 <SolidColorBrush Color="#2B2B2B" x:Name="BorderBackground"/>
                             </Border.Background>
                             
-                            <bi:BootstrapIcon Icon="PlusCircleFill" Width="18"
+                            <bi:BootstrapIcon Icon="PlusCircleFill"
+                                              Width="18"
                                               Foreground="#FFFFFF"/>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -204,15 +203,15 @@
                             </Border.Background>
 
                             <bi:BootstrapIcon Icon="ArrowLeft"
-                                          Width="16"
-                                          Foreground="White"
-                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                          HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                                              Width="16"
+                                              Foreground="White"
+                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
                         </Border>
                         <ControlTemplate.Triggers>
 
                             <EventTrigger RoutedEvent="Border.MouseEnter"
-                                      SourceName="border">
+                                          SourceName="border">
                                 <BeginStoryboard>
                                     <Storyboard>
                                         <ColorAnimation Storyboard.TargetName="BorderBackground"
@@ -249,13 +248,16 @@
 
         <!--ListViewItem-->
         <Style TargetType="ListViewItem" x:Key="BanWord">
+            <Setter Property="Width" Value="410"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Margin" Value="0,5,0,0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="ListViewItem">
                         <Border x:Name="border"
-                                Margin="0,5,0,0"
-                                Width="410"
-                                Height="40"
+                                Margin="{TemplateBinding Margin}"
+                                Width="{TemplateBinding Width}"
+                                Height="{TemplateBinding Height}"
                                 CornerRadius="4">
                             <Border.Background>
                                 <SolidColorBrush Color="#282828" x:Name="BorderBackground"/>

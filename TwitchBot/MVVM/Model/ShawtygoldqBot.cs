@@ -33,8 +33,8 @@ namespace TwitchBot.MVVM.Model
         private List<BanWord> BanWords { get; set; } = new() /*{ "макака", "гомик", "гомосек", "негр", "негритянка", "негрунчик", "негрилла", "кацап", "москаль", "русня", "хохол", "укроп", "жид", "хач", "даун", "педик", "педераст", "пидорас", "пидор", "пидарас", "гей", "шлюха", "блядота", "мать ебал", "иди нахуй" }*/;
         private ObservableCollection<string> Messages { get; set; } = new();
 
-        //имена модераторов или ботов хз как их назвать, которые автоматом подключаются к чату на Twitch
-        private List<string> TwitchBotNames { get; set; } = new() { $"shawtygoldqbot", "shawtygoldq", "wannabemygamerfriend", "0ax2", "kattah", "drapsnatt", "aliceydra", "commanderroot", "anotherttvviewer", "01olivia", "01ella", "streamelements", "maria_anderson_", "lurxx" };
+        ////имена модераторов или ботов хз как их назвать, которые автоматом подключаются к чату на Twitch
+        //private List<string> TwitchBotNames { get; set; } = new() { $"shawtygoldqbot", "shawtygoldq", "wannabemygamerfriend", "0ax2", "kattah", "drapsnatt", "aliceydra", "commanderroot", "anotherttvviewer", "01olivia", "01ella", "streamelements", "maria_anderson_", "lurxx" };
 
         #endregion
 
@@ -344,40 +344,6 @@ namespace TwitchBot.MVVM.Model
 
             return number;
         }
-
-        ////метод проверяющий является ли участник чата ботом
-        //private bool BotCheck(string username)
-        //{
-        //    bool bot = false;
-
-        //    for(int i  = 0; i < TwitchBotNames.Count; i++)
-        //    {
-        //        //если имя совпадает с именем бота
-        //        if(username == TwitchBotNames[i])
-        //        {
-        //            bot = true; 
-        //        }
-        //    }
-
-        //    return bot;
-        //}
-
-        ////метод проверяющий приветствовал ли бот пользователя в чате
-        //private bool HelloCheck(string username)
-        //{
-        //    bool result = false;
-
-        //    for(int i = 0; i < HelloNames.Count; i++)
-        //    {
-        //        //если пользователя уже приветствовали
-        //        if(username == HelloNames[i])
-        //        {
-        //            result = true;
-        //        }
-        //    }
-
-        //    return result;
-        //}
 
         #endregion
     }
